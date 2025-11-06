@@ -115,6 +115,9 @@ scripts_to_remove=(scripts/*.zsh)
 scripts_to_remove=(${scripts_to_remove:#scripts/update-ruby-versions.zsh})
 git rm -f "${scripts_to_remove[@]}"
 
+# Remove template-specific configuration files
+git rm -f .rubocop.yml
+
 # Amend the initial commit with all changes
 git add .
 git commit --amend -m ":new: Initial commit"
