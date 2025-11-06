@@ -85,7 +85,11 @@ $content
 EOF
 
 # Rewrite version.rb with proper module nesting
-content='VERSION = "0.1.0"'
+content=$(cat <<'EOF'
+VERSION = "0.1.0"
+public_constant :VERSION
+EOF
+)
 content=$(wrap-modules "$content" module_names)
 
 cat > "lib/${path_name}/version.rb" <<EOF

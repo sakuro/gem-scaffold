@@ -5,9 +5,10 @@ source "https://rubygems.org"
 gemspec
 
 group :development, :test do
+  gem "rake"
+
   gem "irb"
   gem "repl_type_completor"
-  gem "rake"
 end
 
 group :development do
