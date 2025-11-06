@@ -21,10 +21,12 @@ underscore_name=$(echo "$repo_name" | tr '-' '_')
 
 # Generate module nesting for Ruby files
 # Example: "my-awesome-gem" -> ["My", "Awesome", "Gem"]
+# Example: "my-foo_bar-gem" -> ["My", "FooBar", "Gem"]
 IFS='-' read -rA parts <<< "$repo_name"
 module_names=()
 for part in "${parts[@]}"; do
-  module_names+=($(echo "$part" | sed -E 's/^(.)/\U\1/'))
+  # Convert foo_bar to FooBar (capitalize after _ and remove _)
+  module_names+=($(echo "$part" | sed -E 's/(^|_)(.)/\U\2/g'))
 done
 
 # Generate class name with :: separator from module_names
