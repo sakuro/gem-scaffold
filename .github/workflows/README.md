@@ -1,10 +1,10 @@
 # Ruby Gem Release Workflows
 
-A set of GitHub Actions workflows for automating Ruby gem releases using RubyGems Trusted Publishing (OIDC authentication).
+GitHub Actions workflows for automating Ruby gem releases using RubyGems Trusted Publishing (OIDC authentication).
 
 ## Overview
 
-This repository contains five GitHub Actions workflows that provide a complete CI/CD pipeline for Ruby gems:
+These workflows provide a complete CI/CD pipeline for Ruby gems:
 
 1. **CI Workflow** - Continuous integration testing
 2. **Release Preparation** - Automated release branch and PR creation
@@ -106,7 +106,7 @@ Publishes the gem to RubyGems.org and creates a GitHub release when a release PR
 Automatically maintains `.ruby_versions.json` with the latest maintained Ruby versions.
 
 **Triggers:**
-- Scheduled: Daily at 00:00 UTC (configurable)
+- Scheduled: Daily at a repository-specific time (set during initialization)
 - Manual dispatch
 
 **Actions:**
@@ -115,7 +115,7 @@ Automatically maintains `.ruby_versions.json` with the latest maintained Ruby ve
 - Creates a pull request if changes are detected
 
 **Configuration:**
-- Schedule can be customized per repository using `scripts/generate-cron-schedule.zsh`
+- Schedule is automatically set to a unique time per repository during initialization
 - Automatically excludes EOL (End of Life) Ruby versions
 
 **Requirements:**
@@ -169,7 +169,6 @@ your-gem/
 ├── CHANGELOG.md              # Keep a Changelog format
 ├── Rakefile                  # With build task
 ├── scripts/
-│   ├── generate-cron-schedule.zsh    # Generate repository-specific cron schedule
 │   └── update-ruby-versions.zsh      # Generate .ruby_versions.json
 └── .github/
     └── workflows/
@@ -362,24 +361,7 @@ gh workflow run update-ruby-versions.yml
 - **Release Validation**: Uses the first (oldest) version as the minimum supported version
 - **Release Publishing**: Uses the first (oldest) version to build and publish the gem
 
-**Customizing the Update Schedule:**
-Generate a repository-specific cron schedule to avoid simultaneous API calls:
-
-```bash
-./scripts/generate-cron-schedule.zsh
-# Output: '18 7 * * *'
-```
-
-Update the cron expression in `update-ruby-versions.yml`:
-```yaml
-schedule:
-  - cron: '18 7 * * *'  # Your repository-specific time
-```
+**Update Schedule:**
+The cron schedule in `update-ruby-versions.yml` is automatically set to a repository-specific time during initialization to distribute API load and avoid simultaneous requests from multiple repositories.
 
 **Important:** When the minimum Ruby version changes (e.g., when Ruby 3.2 reaches EOL), the workflows will automatically use the new minimum version. Ensure your gem's code is compatible with the updated Ruby versions.
-
-## License
-
-Copyright (c) 2025 OZAWA Sakuro
-
-These workflows are released under the MIT License. See [LICENSE.txt](LICENSE.txt) for details.
