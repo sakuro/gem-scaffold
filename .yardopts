@@ -1,0 +1,8 @@
+--markup markdown
+--markup-provider redcarpet
+--output-dir docs/api
+--readme README.md
+--files CHANGELOG.md,LICENSE.txt
+--exclude spec/
+--exclude vendor/
+lib/**/*.rb
