@@ -191,10 +191,6 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/YOUR_U
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
 EOF
 
-# Remove scaffold spec file
-git rm -f spec/gem/scaffold_spec.rb
-[[ -d spec/gem ]] && rmdir spec/gem
-
 # Remove this script and other temporary setup scripts (except update-ruby-versions.zsh)
 scripts_to_remove=(scripts/*.zsh)
 scripts_to_remove=(${scripts_to_remove:#scripts/update-ruby-versions.zsh})
