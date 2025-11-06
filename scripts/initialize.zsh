@@ -53,8 +53,10 @@ done
 git mv gem-scaffold.gemspec "${repo_name}.gemspec"
 
 # Move lib files
+# Create destination directories first
+mkdir -p "lib/$(dirname "$path_name")"
+mkdir -p "lib/${path_name}"
 git mv lib/gem/scaffold.rb "lib/${path_name}.rb"
-mkdir -p "lib/$(dirname "$path_name")/$(basename "$path_name")"
 git mv lib/gem/scaffold/version.rb "lib/${path_name}/version.rb"
 
 # Rewrite main lib file with proper module nesting
