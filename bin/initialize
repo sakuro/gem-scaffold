@@ -68,7 +68,7 @@ function wrap-modules()
 
 # Generate cron schedule expression from directory path and current time
 # Usage: cron-schedule
-# Output: '16 8 * * *' (minute: 1-59, hour: 1-23)
+# Output: '16 8 2-8 1,4 *' (minute: 1-59, hour: 1-23, days 2-8 of Jan/Apr)
 function cron-schedule()
 {
   # Use full PWD and current timestamp for uniqueness
@@ -81,8 +81,8 @@ function cron-schedule()
   local minute=$((0x${hash:0:8} % 59 + 1))
   local hour=$((0x${hash:8:8} % 23 + 1))
 
-  # Output cron expression
-  echo "'$minute $hour * * *'"
+  # Output cron expression for twice-yearly Ruby version checks
+  echo "'$minute $hour 2-8 1,4 *'"
 }
 
 # Generate README.md with gem documentation
@@ -184,7 +184,7 @@ EOF
 # Update Ruby Versions workflow schedule
 cron_schedule=$(cron-schedule)
 inplace .github/workflows/update-ruby-versions.yml sed \
-  -e "s|# Run at .* UTC every day.*|# Run at repository-specific time every day to distribute API load|" \
+  -e "s|# Run at .* UTC .*|# Run at repository-specific time on Jan 2-8 and Apr 2-8 to distribute API load|" \
   -e "s|cron: '[^']*'|cron: $cron_schedule|"
 
 # Generate .ruby_versions.json

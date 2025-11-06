@@ -1,10 +1,11 @@
 name: Update Ruby Versions
 
-# Runs daily to keep .ruby_versions.json up-to-date with all maintained Ruby versions
+# Runs twice a year to keep .ruby_versions.json up-to-date with all maintained Ruby versions
+# Aligned with Ruby's release schedule: new versions on Dec 25, EOL on Mar 31
 on:
   schedule:
-    # Run at 13:23 UTC every day (repository-specific time to distribute API load)
-    - cron: '23 13 * * *'
+    # Run at 13:23 UTC on Jan 2-8 and Apr 2-8 (1-week window to account for endoflife.date update delays)
+    - cron: '23 13 2-8 1,4 *'
   workflow_dispatch:
 
 jobs:

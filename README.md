@@ -72,7 +72,7 @@ The initialization script creates a fully-configured gem with:
 
 ### CI/CD
 - **Dynamic test matrix**: CI automatically tests against all maintained Ruby versions from `.ruby_versions.json`
-- **Daily Ruby version updates**: GitHub Actions workflow keeps `.ruby_versions.json` current
+- **Twice-yearly Ruby version updates**: GitHub Actions workflow keeps `.ruby_versions.json` current (runs January 2-8 and April 2-8)
 
 ### Automatic Configuration
 - **Author information**: Extracted from git config (user.name, user.email)
