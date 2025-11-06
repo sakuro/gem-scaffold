@@ -85,6 +85,102 @@ function cron-schedule()
   echo "'$minute $hour * * *'"
 }
 
+# Generate README.md with gem documentation
+function generate-readme()
+{
+  cat > README.md <<EOF
+# ${class_name}
+
+TODO: Add a brief description of what this gem does.
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+\`\`\`ruby
+gem '${repo_name}'
+\`\`\`
+
+And then execute:
+
+\`\`\`bash
+bundle install
+\`\`\`
+
+Or install it yourself as:
+
+\`\`\`bash
+gem install ${repo_name}
+\`\`\`
+
+## Usage
+
+\`\`\`ruby
+require '${path_name}'
+
+# TODO: Add usage examples
+\`\`\`
+
+## Development
+
+After checking out the repo, run \`bin/setup\` to install dependencies. Then, run \`rake spec\` to run the tests. You can also run \`bin/console\` for an interactive prompt that will allow you to experiment.
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at ${repo_url}.
+
+## License
+
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+EOF
+}
+
+# Configure GitHub repository settings via API
+function configure-github-settings()
+{
+  echo ""
+  echo "Configuring GitHub repository settings..."
+
+  # Set workflow permissions to read/write and allow PR creation
+  if gh api --method PUT repos/:owner/:repo/actions/permissions/workflow \
+    -f default_workflow_permissions=write \
+    -F can_approve_pull_request_reviews=true 2>/dev/null; then
+    echo "✓ Workflow permissions set to 'Read and write'"
+    echo "✓ GitHub Actions allowed to create and approve pull requests"
+  else
+    echo "⚠ Could not configure workflow permissions (may need to be set manually)"
+  fi
+
+  # Create release environment
+  if gh api --method PUT repos/:owner/:repo/environments/release 2>/dev/null; then
+    echo "✓ Created 'release' environment"
+  else
+    echo "⚠ Could not create 'release' environment (may need to be created manually)"
+  fi
+}
+
+# Print completion message with next steps
+function print-completion-message()
+{
+  cat <<'EOF'
+
+==========================================
+✓ Gem initialization complete!
+==========================================
+
+Next steps:
+  1. Configure RubyGems Trusted Publishing at:
+     https://rubygems.org/oidc/pending_trusted_publishers
+
+  2. Review the release preparation checklist:
+     See .github/workflows/release-preparation.yml for details
+
+  3. Push your changes:
+     git push -f origin main
+
+EOF
+}
+
 # Update Ruby Versions workflow schedule
 cron_schedule=$(cron-schedule)
 inplace .github/workflows/update-ruby-versions.yml sed \
@@ -230,52 +326,8 @@ content=$(wrap-modules "$content" module_names)
 
 echo "$content" > "sig/${path_name}.rbs"
 
-# Rewrite README.md with simple gem documentation
-cat > README.md <<EOF
-# ${class_name}
-
-TODO: Add a brief description of what this gem does.
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-\`\`\`ruby
-gem '${repo_name}'
-\`\`\`
-
-And then execute:
-
-\`\`\`bash
-bundle install
-\`\`\`
-
-Or install it yourself as:
-
-\`\`\`bash
-gem install ${repo_name}
-\`\`\`
-
-## Usage
-
-\`\`\`ruby
-require '${path_name}'
-
-# TODO: Add usage examples
-\`\`\`
-
-## Development
-
-After checking out the repo, run \`bin/setup\` to install dependencies. Then, run \`rake spec\` to run the tests. You can also run \`bin/console\` for an interactive prompt that will allow you to experiment.
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at ${repo_url}.
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-EOF
+# Generate README.md
+generate-readme
 
 # Remove initialization script
 git rm bin/initialize
@@ -291,40 +343,8 @@ mise exec -- bundle exec docquet install-config --force
 git add .
 git commit --amend -m ":new: Initial commit"
 
-# Configure GitHub repository settings via API
-echo ""
-echo "Configuring GitHub repository settings..."
-
-# Set workflow permissions to read/write and allow PR creation
-if gh api --method PUT repos/:owner/:repo/actions/permissions/workflow \
-  -f default_workflow_permissions=write \
-  -F can_approve_pull_request_reviews=true 2>/dev/null; then
-  echo "✓ Workflow permissions set to 'Read and write'"
-  echo "✓ GitHub Actions allowed to create and approve pull requests"
-else
-  echo "⚠ Could not configure workflow permissions (may need to be set manually)"
-fi
-
-# Create release environment
-if gh api --method PUT repos/:owner/:repo/environments/release 2>/dev/null; then
-  echo "✓ Created 'release' environment"
-else
-  echo "⚠ Could not create 'release' environment (may need to be created manually)"
-fi
+# Configure GitHub repository settings
+configure-github-settings
 
 # Print completion message
-echo ""
-echo "=========================================="
-echo "✓ Gem initialization complete!"
-echo "=========================================="
-echo ""
-echo "Next steps:"
-echo "  1. Configure RubyGems Trusted Publishing at:"
-echo "     https://rubygems.org/oidc/pending_trusted_publishers"
-echo ""
-echo "  2. Review the release preparation checklist:"
-echo "     See .github/workflows/release-preparation.yml for details"
-echo ""
-echo "  3. Push your changes:"
-echo "     git push -f origin main"
-echo ""
+print-completion-message
