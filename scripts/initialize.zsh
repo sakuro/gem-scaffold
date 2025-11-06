@@ -35,6 +35,9 @@ done
 # Generate class name with :: separator from module_names
 class_name="${(j.::.)module_names}"
 
+# Get minimum Ruby version from .ruby_versions.json
+min_ruby_version=$(jq -r '.ruby[0]' .ruby_versions.json)
+
 # Replace content in files (README.md is excluded as it contains template instructions)
 # Note: lib/sig files are excluded as they will be completely rewritten later
 files_to_update=(
@@ -56,6 +59,10 @@ chmod +x bin/console
 
 # Rename gemspec file
 git mv gem-scaffold.gemspec "${repo_name}.gemspec"
+
+# Update required_ruby_version in gemspec
+inplace "${repo_name}.gemspec" sed \
+  -e "s/required_ruby_version = \">= [0-9.]*\"/required_ruby_version = \">= $min_ruby_version\"/"
 
 # Remove scaffold files (will be completely rewritten later)
 git rm -f lib/gem/scaffold.rb lib/gem/scaffold/version.rb sig/gem/scaffold.rbs
