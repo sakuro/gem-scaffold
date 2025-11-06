@@ -4,6 +4,9 @@ require "zeitwerk"
 require_relative "scaffold/version"
 
 module Gem
+  # Gem::Scaffold provides a template for creating Ruby gems with modern best practices.
+  #
+  # This module serves as the namespace for the gem's functionality.
   module Scaffold
     class Error < StandardError; end
 

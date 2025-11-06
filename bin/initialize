@@ -277,11 +277,15 @@ mkdir -p "lib/${path_name}"
 mkdir -p "sig/$(dirname "$path_name")"
 
 # Rewrite main lib file with proper module nesting and zeitwerk loader
-content=$(cat <<EOF
+# Split module_names into outer modules and innermost module
+innermost_name="${module_names[-1]}"
+
+# Create innermost content (without documentation comment)
+innermost_content=$(cat <<EOF
 class Error < StandardError; end
 
 loader = Zeitwerk::Loader.for_gem
-loader.ignore("\#{__dir__}/${path_name:t}/version.rb")
+loader.ignore("#{__dir__}/${path_name:t}/version.rb")
 # loader.inflector.inflect(
 #   "html" => "HTML",
 #   "ssl" => "SSL"
@@ -289,7 +293,30 @@ loader.ignore("\#{__dir__}/${path_name:t}/version.rb")
 loader.setup
 EOF
 )
-content=$(wrap-modules "$content" module_names)
+
+# Wrap with innermost module
+content=$(wrap-module "$innermost_name" "$innermost_content")
+
+# Add documentation comment before the innermost module
+doc_comment=$(cat <<'EOF'
+# CLASS_NAME provides [description of your gem].
+#
+# This module serves as the namespace for the gem's functionality.
+EOF
+)
+doc_comment=$(echo "$doc_comment" | sed "s/CLASS_NAME/$class_name/")
+
+content=$(cat <<EOF
+$doc_comment
+$content
+EOF
+)
+
+# Wrap with outer modules if there are more than one module in the nesting
+if [ ${#module_names[@]} -gt 1 ]; then
+  outer_names=("${module_names[@]:0:${#module_names[@]}-1}")
+  content=$(wrap-modules "$content" outer_names)
+fi
 
 cat > "lib/${path_name}.rb" <<EOF
 # frozen_string_literal: true
