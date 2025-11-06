@@ -1,18 +1,29 @@
-/.bundle/
-/.yardoc
-/_yardoc/
-/coverage/
-/doc/
-/pkg/
-/spec/reports/
+#
+/bin/console
+/bin/setup
+
+# Tempoary files
 /tmp/
 
-# rspec failure tracking
-.rspec_status
-# Gem should ignore Gemfile.lock
-Gemfile.lock
+# RSpec
+/spec/reports/
+/.rspec_status
+
+# SimpleCov
+/coverage/
+
+# YARD
+/.yardoc
+## Generated API docs (specified in .yardopts)
+/doc/api/
+
+# Packaging
+/pkg/
+## Gem should ignore Gemfile.lock
+/Gemfile.lock
 
 # MCP
-/.serena/*
-!/.serena/project.yml
 /.mcp.json
+## Ignore serena stuff except project.yml
+/.serena/
+!/.serena/project.yml
