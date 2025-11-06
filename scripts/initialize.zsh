@@ -33,12 +33,10 @@ done
 class_name="${(j.::.)module_names}"
 
 # Replace content in files (README.md is excluded as it contains template instructions)
+# Note: lib/sig files are excluded as they will be completely rewritten later
 files_to_update=(
   bin/console
   gem-scaffold.gemspec
-  lib/gem/scaffold.rb
-  lib/gem/scaffold/version.rb
-  sig/gem/scaffold.rbs
   spec/spec_helper.rb
 )
 
@@ -56,12 +54,16 @@ chmod +x bin/console
 # Rename gemspec file
 git mv gem-scaffold.gemspec "${repo_name}.gemspec"
 
-# Move lib files
-# Create destination directories first
+# Remove scaffold files (will be completely rewritten later)
+git rm -f lib/gem/scaffold.rb lib/gem/scaffold/version.rb sig/gem/scaffold.rbs
+[[ -d lib/gem/scaffold ]] && rmdir lib/gem/scaffold
+[[ -d lib/gem ]] && rmdir lib/gem
+[[ -d sig/gem ]] && rmdir sig/gem
+
+# Create destination directories for new files
 mkdir -p "lib/$(dirname "$path_name")"
 mkdir -p "lib/${path_name}"
-git mv lib/gem/scaffold.rb "lib/${path_name}.rb"
-git mv lib/gem/scaffold/version.rb "lib/${path_name}/version.rb"
+mkdir -p "sig/$(dirname "$path_name")"
 
 # Rewrite main lib file with proper module nesting
 content=$(cat <<EOF
@@ -89,12 +91,6 @@ cat > "lib/${path_name}/version.rb" <<EOF
 $content
 EOF
 
-rmdir lib/gem/scaffold lib/gem
-
-# Move sig files
-mkdir -p "sig/$(dirname "$path_name")"
-git mv sig/gem/scaffold.rbs "sig/${path_name}.rbs"
-
 # Rewrite rbs file with proper module nesting
 content=$(cat <<EOF
 VERSION: String
@@ -107,11 +103,9 @@ content=$(wrap-modules "$content" module_names)
 
 echo "$content" > "sig/${path_name}.rbs"
 
-rmdir sig/gem
-
 # Remove scaffold spec file
 git rm -f spec/gem/scaffold_spec.rb
-rmdir spec/gem 2>/dev/null || true
+[[ -d spec/gem ]] && rmdir spec/gem
 
 # Remove this script and other temporary setup scripts (except update-ruby-versions.zsh)
 scripts_to_remove=(scripts/*.zsh)
