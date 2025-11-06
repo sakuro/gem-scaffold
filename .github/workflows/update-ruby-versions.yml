@@ -36,17 +36,19 @@ jobs:
           branch="update-ruby-versions"
           git checkout -b "$branch"
           git add .ruby_versions.json
-          git commit -m "Update Ruby versions in .ruby_versions.json"
+          git commit -m ":arrow_up: Update Ruby versions in .ruby_versions.json"
           git push -f origin "$branch"
 
-          # Create or update PR
+          # Check if PR already exists
           if gh pr list --head "$branch" --json number -q '.[0].number' | grep -q .; then
             echo "PR already exists"
-          else
-            gh pr create \
-              --title "Update Ruby versions" \
-              --body "Automated update of maintained Ruby versions from endoflife.date API.
-
-          This PR updates \`.ruby_versions.json\` with all maintained Ruby versions." \
-              --label "dependencies"
+            exit 0
           fi
+
+          # Create PR body in temporary file
+          cat > /tmp/pr-body.md <<'EOF'
+          Automated update of maintained Ruby versions from endoflife.date API.
+
+          This PR updates `.ruby_versions.json` with all maintained Ruby versions.
+          EOF
+          gh pr create --title ":arrow_up: Update Ruby versions" --body-file /tmp/pr-body.md
