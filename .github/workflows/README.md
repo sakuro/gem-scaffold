@@ -4,12 +4,13 @@ A set of GitHub Actions workflows for automating Ruby gem releases using RubyGem
 
 ## Overview
 
-This repository contains four GitHub Actions workflows that provide a complete CI/CD pipeline for Ruby gems:
+This repository contains five GitHub Actions workflows that provide a complete CI/CD pipeline for Ruby gems:
 
 1. **CI Workflow** - Continuous integration testing
 2. **Release Preparation** - Automated release branch and PR creation
 3. **Release Validation** - Pre-merge release checks
 4. **Release Publishing** - Automated gem publishing to RubyGems.org
+5. **Update Ruby Versions** - Automated Ruby version maintenance
 
 ## Workflows
 
@@ -22,10 +23,12 @@ Runs tests and quality checks across multiple Ruby versions.
 - Pull requests
 
 **Matrix Testing:**
-- Tests against the latest 3 supported Ruby versions
+- Tests against Ruby versions defined in `.ruby_versions.json`
+- Automatically uses all maintained Ruby versions
 - See [Ruby Maintenance Branches](https://www.ruby-lang.org/en/downloads/branches/) for current supported versions
 
 **Steps:**
+- Reads Ruby versions from `.ruby_versions.json`
 - Checks out code
 - Sets up Ruby with bundler cache
 - Runs `bundle exec rake` (default task)
@@ -57,6 +60,9 @@ Validates release PRs to ensure everything is correct before merging.
 **Trigger:**
 - Pull requests to `main` branch (only for `release-v*` branches)
 
+**Ruby Version:**
+- Uses the minimum supported Ruby version from `.ruby_versions.json`
+
 **Validations:**
 - Version format (must be `x.y.z`)
 - Version consistency between branch name and `version.rb`
@@ -78,6 +84,9 @@ Publishes the gem to RubyGems.org and creates a GitHub release when a release PR
 **Trigger:**
 - Pull request closure (only when merged and from `release-v*` branches)
 
+**Ruby Version:**
+- Uses the minimum supported Ruby version from `.ruby_versions.json`
+
 **Actions:**
 - Extracts version from branch name
 - Checks out the release tag
@@ -92,42 +101,27 @@ Publishes the gem to RubyGems.org and creates a GitHub release when a release PR
 - Environment: `release` (configured in GitHub repository settings)
 - RubyGems Trusted Publishing configured
 
+### 5. Update Ruby Versions Workflow (`update-ruby-versions.yml`)
+
+Automatically maintains `.ruby_versions.json` with the latest maintained Ruby versions.
+
+**Triggers:**
+- Scheduled: Daily at 00:00 UTC (configurable)
+- Manual dispatch
+
+**Actions:**
+- Fetches maintained Ruby versions from [endoflife.date API](https://endoflife.date/ruby)
+- Updates `.ruby_versions.json` with all maintained versions (excluding EOL versions)
+- Creates a pull request if changes are detected
+
+**Configuration:**
+- Schedule can be customized per repository using `scripts/generate-cron-schedule.zsh`
+- Automatically excludes EOL (End of Life) Ruby versions
+
+**Requirements:**
+- Repository permissions: `contents: write`, `pull-requests: write`
+
 ## Initial Setup
-
-### 0. Install Workflows to Your Repository
-
-**Using git archive and tar (recommended):**
-
-```bash
-# Navigate to your target gem repository
-cd /path/to/your-gem
-
-# Create .github/workflows directory if it doesn't exist
-mkdir -p .github/workflows
-
-# Copy all files (workflows and README) using git archive
-git -C /path/to/gem-workflows archive HEAD | tar -C .github/workflows -xv
-
-# Verify files were copied
-ls -la .github/workflows/
-```
-
-**Alternative: Manual copy:**
-
-```bash
-# Copy files manually
-cp /path/to/gem-workflows/*.yml /path/to/your-gem/.github/workflows/
-```
-
-**Note:** `git archive --remote` does not work with HTTPS protocol (e.g., GitHub). Use the local clone method or manual copy instead.
-
-After copying the workflows, commit them to your repository:
-
-```bash
-git add .github/workflows/
-git commit -m "Add release automation workflows"
-git push
-```
 
 ### 1. Repository Settings
 
@@ -168,17 +162,22 @@ Ensure your project has the following structure:
 
 ```
 your-gem/
+├── .ruby_versions.json       # Maintained Ruby versions (auto-updated)
 ├── lib/
 │   └── {gem_name}/
 │       └── version.rb        # Contains VERSION constant
 ├── CHANGELOG.md              # Keep a Changelog format
 ├── Rakefile                  # With build task
+├── scripts/
+│   ├── generate-cron-schedule.zsh    # Generate repository-specific cron schedule
+│   └── update-ruby-versions.zsh      # Generate .ruby_versions.json
 └── .github/
     └── workflows/
         ├── ci.yml
         ├── release-preparation.yml
         ├── release-validation.yml
-        └── release-publish.yml
+        ├── release-publish.yml
+        └── update-ruby-versions.yml
 ```
 
 **version.rb** should contain:
@@ -328,43 +327,56 @@ The Release Publishing workflow will automatically:
 
 ## Maintenance
 
-### Updating Ruby Versions
+### Ruby Version Management
 
-Check [Ruby Maintenance Branches](https://www.ruby-lang.org/en/downloads/branches/) for currently supported versions.
+Ruby versions are automatically managed through `.ruby_versions.json`, which is maintained by the `update-ruby-versions.yml` workflow.
 
-When updating supported Ruby versions, you need to modify three workflow files:
+**Automatic Updates:**
+- The workflow runs daily and fetches the latest maintained Ruby versions from [endoflife.date API](https://endoflife.date/ruby)
+- Automatically updates `.ruby_versions.json` with all maintained versions (typically 3-4 versions)
+- Creates a pull request when changes are detected
+- All workflows (CI, release validation, and release publishing) automatically use the updated versions
 
-**1. Update CI matrix** in `ci.yml`:
+**Manual Updates:**
+You can manually trigger the update workflow:
 
-```yaml
-matrix:
-  ruby:
-    - 'X.Y'
-    - 'X.Y'
-    - 'X.Y'  # Latest supported versions
+```bash
+# Using GitHub CLI
+gh workflow run update-ruby-versions.yml
+
+# Or generate .ruby_versions.json locally
+./scripts/update-ruby-versions.zsh > .ruby_versions.json
 ```
 
-**2. Update minimum Ruby version** in `release-validation.yml`:
-
-```yaml
-- name: Set up Ruby
-  uses: ruby/setup-ruby@v1
-  with:
-    ruby-version: 'X.Y'  # Minimum supported version
-    bundler-cache: true
+**`.ruby_versions.json` Format:**
+```json
+{
+  "ruby": ["3.2", "3.3", "3.4"]
+}
 ```
 
-**3. Update minimum Ruby version** in `release-publish.yml`:
+**Note:** When a new Ruby version is released (e.g., Ruby 3.5 in December 2024), the array will temporarily contain 4 versions until the oldest version reaches EOL.
 
-```yaml
-- name: Set up Ruby
-  uses: ruby/setup-ruby@v1
-  with:
-    ruby-version: 'X.Y'  # Minimum supported version
-    bundler-cache: true
+**How Workflows Use Ruby Versions:**
+- **CI Workflow**: Tests against all versions in the `ruby` array (oldest to newest)
+- **Release Validation**: Uses the first (oldest) version as the minimum supported version
+- **Release Publishing**: Uses the first (oldest) version to build and publish the gem
+
+**Customizing the Update Schedule:**
+Generate a repository-specific cron schedule to avoid simultaneous API calls:
+
+```bash
+./scripts/generate-cron-schedule.zsh
+# Output: '18 7 * * *'
 ```
 
-**Important:** When dropping support for older Ruby versions, update the `ruby-version` in both `release-validation.yml` and `release-publish.yml` to the new minimum supported version. This ensures gem building and publishing use a supported Ruby version.
+Update the cron expression in `update-ruby-versions.yml`:
+```yaml
+schedule:
+  - cron: '18 7 * * *'  # Your repository-specific time
+```
+
+**Important:** When the minimum Ruby version changes (e.g., when Ruby 3.2 reaches EOL), the workflows will automatically use the new minimum version. Ensure your gem's code is compatible with the updated Ruby versions.
 
 ## License
 

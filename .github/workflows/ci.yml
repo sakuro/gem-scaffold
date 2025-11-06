@@ -11,16 +11,22 @@ on:
   pull_request:
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: set-matrix
+        run: echo "matrix=$(cat .ruby_versions.json | jq -c .)" >> $GITHUB_OUTPUT
+
   build:
+    needs: setup
     runs-on: ubuntu-latest
     name: Ruby ${{ matrix.ruby }}
     strategy:
       fail-fast: false
-      matrix:
-        ruby:
-          - '3.2'
-          - '3.3'
-          - '3.4'
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
 
     steps:
       - uses: actions/checkout@v5

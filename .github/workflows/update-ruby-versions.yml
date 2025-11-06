@@ -1,0 +1,53 @@
+name: Update Ruby Versions
+
+# Runs daily to keep .ruby_versions.json up-to-date with all maintained Ruby versions
+on:
+  schedule:
+    # Run at 00:00 UTC every day
+    # You can generate a repository-specific schedule using: scripts/generate-cron-schedule.zsh
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Generate ruby.json
+        run: scripts/update-ruby-versions.zsh > .ruby_versions.json
+
+      - name: Setup Git User
+        uses: git-actions/set-user@v1
+
+      - name: Create Pull Request
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          # Check if there are changes
+          if git diff --quiet .ruby_versions.json; then
+            echo "No changes to .ruby_versions.json"
+            exit 0
+          fi
+
+          # Create branch and commit
+          branch="update-ruby-versions"
+          git checkout -b "$branch"
+          git add .ruby_versions.json
+          git commit -m "Update Ruby versions in .ruby_versions.json"
+          git push -f origin "$branch"
+
+          # Create or update PR
+          if gh pr list --head "$branch" --json number -q '.[0].number' | grep -q .; then
+            echo "PR already exists"
+          else
+            gh pr create \
+              --title "Update Ruby versions" \
+              --body "Automated update of maintained Ruby versions from endoflife.date API.
+
+          This PR updates \`.ruby_versions.json\` with all maintained Ruby versions." \
+              --label "dependencies"
+          fi
