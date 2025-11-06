@@ -5,6 +5,14 @@ set -euo pipefail
 # Change to project root directory
 cd "$(dirname "$0")/.."
 
+# Check required commands
+for cmd in gh mise jq git; do
+  if ! command -v "$cmd" &>/dev/null; then
+    echo "Error: Required command '$cmd' is not installed" >&2
+    exit 1
+  fi
+done
+
 source scripts/functions.zsh
 
 # Update Ruby Versions workflow schedule
