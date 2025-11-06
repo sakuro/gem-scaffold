@@ -118,9 +118,6 @@ scripts_to_remove=(scripts/*.zsh)
 scripts_to_remove=(${scripts_to_remove:#scripts/update-ruby-versions.zsh})
 git rm -f "${scripts_to_remove[@]}"
 
-# Remove template-specific configuration files
-git rm -f .rubocop.yml
-
 # Generate binstubs for common gems
 bundle install --quiet
 bundle binstubs docquet irb rake rspec-core rubocop yard --force 2>/dev/null || true
