@@ -14,6 +14,9 @@ inplace .github/workflows/update-ruby-versions.yml sed "s|cron: '[^']*'|cron: $c
 # Generate .ruby_versions.json
 scripts/update-ruby-versions.zsh > .ruby_versions.json
 
+# Trust mise configuration to use correct Ruby version
+mise trust
+
 # Replace gem names based on current repository name
 repo_name=$(basename "$PWD")
 path_name=$(echo "$repo_name" | tr '-' '/')
@@ -112,9 +115,9 @@ scripts_to_remove=(scripts/*.zsh)
 scripts_to_remove=(${scripts_to_remove:#scripts/update-ruby-versions.zsh})
 git rm -f "${scripts_to_remove[@]}"
 
-# Generate binstubs for common gems
-bundle install --quiet
-bundle binstubs docquet irb rake rspec-core rubocop yard --force 2>/dev/null || true
+# Generate binstubs for common gems (using mise to ensure correct Ruby version)
+mise exec -- bundle install --quiet
+mise exec -- bundle binstubs docquet irb rake rspec-core rubocop yard --force 2>/dev/null || true
 
 # Amend the initial commit with all changes
 git add .
