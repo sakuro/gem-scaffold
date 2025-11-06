@@ -1,6 +1,8 @@
 #
-/bin/console
-/bin/setup
+# Ignore generated binstubs except console and setup
+/bin/*
+!/bin/console
+!/bin/setup
 
 # Tempoary files
 /tmp/

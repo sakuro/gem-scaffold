@@ -121,6 +121,10 @@ git rm -f "${scripts_to_remove[@]}"
 # Remove template-specific configuration files
 git rm -f .rubocop.yml
 
+# Generate binstubs for common gems
+bundle install --quiet
+bundle binstubs docquet irb rake rspec-core rubocop yard --force 2>/dev/null || true
+
 # Amend the initial commit with all changes
 git add .
 git commit --amend -m ":new: Initial commit"
