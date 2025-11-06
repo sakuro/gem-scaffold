@@ -152,7 +152,7 @@ function configure-github-settings()
   fi
 
   # Create release environment
-  if gh api --method PUT repos/:owner/:repo/environments/release 2>/dev/null; then
+  if gh api --silent --method PUT repos/:owner/:repo/environments/release; then
     echo "✓ Created 'release' environment"
   else
     echo "⚠ Could not create 'release' environment (may need to be created manually)"
