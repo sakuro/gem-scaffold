@@ -9,7 +9,9 @@ source scripts/functions.zsh
 
 # Update Ruby Versions workflow schedule
 cron_schedule=$(cron-schedule)
-inplace .github/workflows/update-ruby-versions.yml sed "s|cron: '[^']*'|cron: $cron_schedule|"
+inplace .github/workflows/update-ruby-versions.yml sed \
+  -e "s|# Run at .* UTC every day.*|# Run at repository-specific time every day to distribute API load|" \
+  -e "s|cron: '[^']*'|cron: $cron_schedule|"
 
 # Generate .ruby_versions.json
 scripts/update-ruby-versions.zsh > .ruby_versions.json
