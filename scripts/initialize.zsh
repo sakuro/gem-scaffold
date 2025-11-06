@@ -32,9 +32,8 @@ done
 # Generate class name with :: separator from module_names
 class_name="${(j.::.)module_names}"
 
-# Replace content in files
+# Replace content in files (README.md is excluded as it contains template instructions)
 files_to_update=(
-  README.md
   bin/console
   gem-scaffold.gemspec
   lib/gem/scaffold.rb
