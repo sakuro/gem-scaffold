@@ -6,6 +6,7 @@ A template repository for creating Ruby gems with automated Ruby version managem
 
 The initialization script requires the following commands:
 
+- **[zsh](https://www.zsh.org/)** - Z shell (usually pre-installed on macOS/Linux)
 - **[gh](https://cli.github.com/)** - GitHub CLI for repository configuration
 - **[mise](https://mise.jdx.dev/)** - Development environment manager
 - **[jq](https://jqlang.github.io/jq/)** - JSON processor
