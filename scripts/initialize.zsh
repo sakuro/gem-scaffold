@@ -208,3 +208,41 @@ mise exec -- bundle exec docquet install-config --force
 # Amend the initial commit with all changes
 git add .
 git commit --amend -m ":new: Initial commit"
+
+# Configure GitHub repository settings via API
+echo ""
+echo "Configuring GitHub repository settings..."
+
+# Set workflow permissions to read/write and allow PR creation
+if gh api --method PUT repos/:owner/:repo/actions/permissions/workflow \
+  -f default_workflow_permissions=write \
+  -F can_approve_pull_request_reviews=true 2>/dev/null; then
+  echo "✓ Workflow permissions set to 'Read and write'"
+  echo "✓ GitHub Actions allowed to create and approve pull requests"
+else
+  echo "⚠ Could not configure workflow permissions (may need to be set manually)"
+fi
+
+# Create release environment
+if gh api --method PUT repos/:owner/:repo/environments/release 2>/dev/null; then
+  echo "✓ Created 'release' environment"
+else
+  echo "⚠ Could not create 'release' environment (may need to be created manually)"
+fi
+
+# Print completion message
+echo ""
+echo "=========================================="
+echo "✓ Gem initialization complete!"
+echo "=========================================="
+echo ""
+echo "Next steps:"
+echo "  1. Configure RubyGems Trusted Publishing at:"
+echo "     https://rubygems.org/oidc/pending_trusted_publishers"
+echo ""
+echo "  2. Review the release preparation checklist:"
+echo "     See .github/workflows/release-preparation.yml for details"
+echo ""
+echo "  3. Push your changes:"
+echo "     git push -f origin main"
+echo ""
