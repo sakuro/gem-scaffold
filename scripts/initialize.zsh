@@ -50,6 +50,9 @@ for file in "${files_to_update[@]}"; do
     -e "s|gem/scaffold|$path_name|g"
 done
 
+# Restore executable bit on bin/console (lost during sed inplace edit)
+chmod +x bin/console
+
 # Rename gemspec file
 git mv gem-scaffold.gemspec "${repo_name}.gemspec"
 
