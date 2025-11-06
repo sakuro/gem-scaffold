@@ -89,10 +89,17 @@ mkdir -p "lib/$(dirname "$path_name")"
 mkdir -p "lib/${path_name}"
 mkdir -p "sig/$(dirname "$path_name")"
 
-# Rewrite main lib file with proper module nesting
+# Rewrite main lib file with proper module nesting and zeitwerk loader
 content=$(cat <<EOF
 class Error < StandardError; end
-# Your code goes here...
+
+loader = Zeitwerk::Loader.for_gem
+loader.ignore("\#{__dir__}/${path_name:t}/version.rb")
+# loader.inflector.inflect(
+#   "html" => "HTML",
+#   "ssl" => "SSL"
+# )
+loader.setup
 EOF
 )
 content=$(wrap-modules "$content" module_names)
@@ -100,6 +107,7 @@ content=$(wrap-modules "$content" module_names)
 cat > "lib/${path_name}.rb" <<EOF
 # frozen_string_literal: true
 
+require "zeitwerk"
 require_relative "${path_name:t}/version"
 
 $content
