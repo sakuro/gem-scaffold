@@ -1,4 +1,7 @@
-name: Ruby
+name: CI
+
+# This workflow runs tests and quality checks across multiple Ruby versions.
+# It ensures compatibility and maintains code quality for all supported versions.
 
 on:
   push:
@@ -12,14 +15,15 @@ jobs:
     runs-on: ubuntu-latest
     name: Ruby ${{ matrix.ruby }}
     strategy:
+      fail-fast: false
       matrix:
         ruby:
-          - '3.4.7'
+          - '3.2'
+          - '3.3'
+          - '3.4'
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+      - uses: actions/checkout@v5
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
