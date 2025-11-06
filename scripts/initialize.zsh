@@ -201,7 +201,7 @@ mise exec -- bundle install --quiet
 mise exec -- bundle binstubs docquet irb rake rspec-core rubocop yard --force 2>/dev/null || true
 
 # Install RuboCop configuration via docquet
-mise exec -- bundle exec docquet install-config
+mise exec -- bundle exec docquet install-config --force
 
 # Amend the initial commit with all changes
 git add .
