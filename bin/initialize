@@ -277,8 +277,8 @@ Bug reports and pull requests are welcome on GitHub at ${repo_url}.
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
 EOF
 
-# Remove initialization script and scripts directory
-git rm -rf scripts
+# Remove initialization script
+git rm bin/initialize
 
 # Generate binstubs for common gems (using mise to ensure correct Ruby version)
 mise exec -- bundle install --quiet

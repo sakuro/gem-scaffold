@@ -25,7 +25,7 @@ The initialization script requires the following commands:
 
 3. Run the initialization script:
    ```bash
-   ./scripts/initialize.zsh
+   ./bin/initialize
    ```
 
    This script will:
