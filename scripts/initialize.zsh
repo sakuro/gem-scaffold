@@ -144,6 +144,53 @@ content=$(wrap-modules "$content" module_names)
 
 echo "$content" > "sig/${path_name}.rbs"
 
+# Rewrite README.md with simple gem documentation
+cat > README.md <<EOF
+# ${class_name}
+
+TODO: Add a brief description of what this gem does.
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+\`\`\`ruby
+gem '${repo_name}'
+\`\`\`
+
+And then execute:
+
+\`\`\`bash
+bundle install
+\`\`\`
+
+Or install it yourself as:
+
+\`\`\`bash
+gem install ${repo_name}
+\`\`\`
+
+## Usage
+
+\`\`\`ruby
+require '${path_name}'
+
+# TODO: Add usage examples
+\`\`\`
+
+## Development
+
+After checking out the repo, run \`bin/setup\` to install dependencies. Then, run \`rake spec\` to run the tests. You can also run \`bin/console\` for an interactive prompt that will allow you to experiment.
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/YOUR_USERNAME/${repo_name}.
+
+## License
+
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+EOF
+
 # Remove scaffold spec file
 git rm -f spec/gem/scaffold_spec.rb
 [[ -d spec/gem ]] && rmdir spec/gem

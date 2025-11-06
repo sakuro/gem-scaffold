@@ -30,10 +30,35 @@ A template repository for creating Ruby gems with automated Ruby version managem
 
 ## Features
 
-- **Automated Ruby version management**: Daily GitHub Actions workflow updates `.ruby_versions.json` with maintained Ruby versions from [endoflife.date](https://endoflife.date/ruby)
-- **Dynamic CI matrix**: CI workflow automatically uses Ruby versions from `.ruby_versions.json`
-- **Mise integration**: Development environment uses minimum supported Ruby version
-- **Repository-specific scheduling**: Each repository gets unique cron schedule to avoid API rate limits
+This template provides a modern Ruby gem setup with automated Ruby version management:
+
+- **Always up-to-date Ruby support**: Automatically tracks maintained Ruby versions from [endoflife.date](https://endoflife.date/ruby)
+- **Zero-maintenance CI matrix**: Tests run against current Ruby versions without manual updates
+- **Repository-specific scheduling**: Each cloned repository gets a unique cron schedule to distribute API load
+- **One-command initialization**: Single script transforms the template into a ready-to-use gem
+
+## What's Included in the Generated Gem
+
+The initialization script creates a fully-configured gem with:
+
+### Code Structure
+- **Zeitwerk autoloading**: Automatic code loading with proper namespace handling
+- **Proper module nesting**: Multi-level module structure based on gem name (e.g., `my-awesome-gem` → `My::Awesome::Gem`)
+- **RBS type signatures**: Type definition files in `sig/` directory
+
+### Development Tools
+- **RuboCop with docquet**: Code style enforcement with [docquet](https://github.com/sakuro/docquet) configuration
+- **Pre-generated binstubs**: Executables for common tools (docquet, irb, rake, rspec, rubocop, yard)
+- **Mise integration**: Development environment uses minimum supported Ruby version from `.ruby_versions.json`
+
+### CI/CD
+- **Dynamic test matrix**: CI automatically tests against all maintained Ruby versions from `.ruby_versions.json`
+- **Daily Ruby version updates**: GitHub Actions workflow keeps `.ruby_versions.json` current
+
+### Automatic Configuration
+- **Author information**: Extracted from git config (user.name, user.email)
+- **Dependency versions**: Latest compatible versions detected from remote (zeitwerk, etc.)
+- **Required Ruby version**: Set to oldest maintained version from `.ruby_versions.json`
 
 ## Development
 
