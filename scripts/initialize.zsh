@@ -70,7 +70,7 @@ content=$(wrap-modules "$content" module_names)
 cat > "lib/${path_name}.rb" <<EOF
 # frozen_string_literal: true
 
-require_relative "${path_name}/version"
+require_relative "${path_name:t}/version"
 
 $content
 EOF
@@ -107,4 +107,4 @@ rmdir sig/gem
 
 # Remove scaffold spec file
 git rm -f spec/gem/scaffold_spec.rb
-rmdir spec/gem
+rmdir spec/gem 2>/dev/null || true
