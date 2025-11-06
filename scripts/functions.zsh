@@ -16,7 +16,7 @@ function indent()
 {
   local n=$1
   local spaces=$(printf '%*s' $((n * 2)) '')
-  sed "s/^/$spaces/"
+  sed "/./s/^/$spaces/"
 }
 
 # Wrap content with module declaration
