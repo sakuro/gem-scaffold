@@ -2,7 +2,7 @@
 
 autoload -U colors
 colors
-# prefix for +x
+# prefix for -x
 PS4="${fg[cyan]}[$0:t]$reset_color "
 # prefix for stdout
 exec > >(sed -e "s/^/${fg[magenta]}[$0:t]$reset_color /")
