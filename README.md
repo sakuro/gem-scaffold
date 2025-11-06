@@ -15,16 +15,20 @@ The initialization script requires the following commands:
 
 ## Usage
 
-1. Click the "Use this template" button on GitHub to create a new repository with your gem name
-   - See [Creating a repository from a template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)
+1. Create a new repository from this template:
 
-2. Clone your new repository:
+   **Option A: Using GitHub CLI (recommended)**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/my-gem-name.git
+   gh repo create my-gem-name --template sakuro/gem-scaffold --private --clone
    cd my-gem-name
    ```
 
-3. Run the initialization script:
+   **Option B: Using GitHub web interface**
+   - Click the "Use this template" button on GitHub
+   - See [Creating a repository from a template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)
+   - Clone your new repository
+
+2. Run the initialization script:
    ```bash
    ./bin/initialize
    ```
@@ -34,9 +38,10 @@ The initialization script requires the following commands:
    - Generate proper Ruby module namespacing
    - Set up repository-specific cron schedule
    - Create initial `.ruby_versions.json`
-   - Remove setup scripts and amend changes into initial commit
+   - Configure GitHub settings automatically
+   - Remove setup script and amend changes into initial commit
 
-4. Push the initialized changes:
+3. Push the initialized changes:
    ```bash
    git push -f origin main
    ```
