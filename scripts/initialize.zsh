@@ -110,3 +110,12 @@ rmdir sig/gem
 # Remove scaffold spec file
 git rm -f spec/gem/scaffold_spec.rb
 rmdir spec/gem 2>/dev/null || true
+
+# Remove this script and other temporary setup scripts (except update-ruby-versions.zsh)
+scripts_to_remove=(scripts/*.zsh)
+scripts_to_remove=(${scripts_to_remove:#scripts/update-ruby-versions.zsh})
+git rm -f "${scripts_to_remove[@]}"
+
+# Amend the initial commit with all changes
+git add .
+git commit --amend -m ":new: Initial commit"
