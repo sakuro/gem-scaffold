@@ -17,7 +17,10 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Generate ruby.json
-        run: scripts/update-ruby-versions.zsh > .ruby_versions.json
+        run: |
+          curl -s https://endoflife.date/api/v1/products/ruby | \
+            jq '{ruby: [.result.releases | sort_by(.releaseDate) | reverse | .[] | select(.isEol == false) | .name] | reverse}' \
+            > .ruby_versions.json
 
       - name: Setup Git User
         uses: git-actions/set-user@v1

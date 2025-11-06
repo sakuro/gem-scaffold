@@ -9,6 +9,7 @@ The initialization script requires the following commands:
 - **[gh](https://cli.github.com/)** - GitHub CLI for repository configuration
 - **[mise](https://mise.jdx.dev/)** - Development environment manager
 - **[jq](https://jqlang.github.io/jq/)** - JSON processor
+- **[curl](https://curl.se/)** - HTTP client (usually pre-installed)
 - **git** - Version control (usually pre-installed)
 
 ## Usage

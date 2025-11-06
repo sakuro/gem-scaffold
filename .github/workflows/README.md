@@ -123,14 +123,18 @@ Automatically maintains `.ruby_versions.json` with the latest maintained Ruby ve
 
 ## Initial Setup
 
-### 1. Repository Settings
+### Automated Configuration
 
-Configure GitHub repository permissions at `https://github.com/{owner}/{repo}/settings/actions`:
+The initialization script automatically configures:
 
-1. **Workflow permissions**: Set to "Read and write permissions"
-2. **Pull request permissions**: Enable "Allow GitHub Actions to create and approve pull requests"
+**Repository Settings** (`https://github.com/{owner}/{repo}/settings/actions`):
+- **Workflow permissions**: Set to "Read and write permissions"
+- **Pull request permissions**: Enable "Allow GitHub Actions to create and approve pull requests"
 
-### 2. RubyGems Trusted Publishing
+**GitHub Environment** (`https://github.com/{owner}/{repo}/settings/environments`):
+- Creates `release` environment for deployment protection
+
+### RubyGems Trusted Publishing
 
 Configure OIDC authentication for secure, token-less gem publishing:
 
@@ -148,15 +152,7 @@ Configure OIDC authentication for secure, token-less gem publishing:
 
 Reference: https://guides.rubygems.org/trusted-publishing/releasing-gems/
 
-### 3. GitHub Environment
-
-Create a `release` environment at `https://github.com/{owner}/{repo}/settings/environments`:
-
-1. Click "New environment"
-2. Name it `release`
-3. (Optional) Add protection rules or required reviewers
-
-### 4. Project Structure
+## Project Structure
 
 Ensure your project has the following structure:
 
@@ -168,8 +164,6 @@ your-gem/
 │       └── version.rb        # Contains VERSION constant
 ├── CHANGELOG.md              # Keep a Changelog format
 ├── Rakefile                  # With build task
-├── scripts/
-│   └── update-ruby-versions.zsh      # Generate .ruby_versions.json
 └── .github/
     └── workflows/
         ├── ci.yml
@@ -344,7 +338,9 @@ You can manually trigger the update workflow:
 gh workflow run update-ruby-versions.yml
 
 # Or generate .ruby_versions.json locally
-./scripts/update-ruby-versions.zsh > .ruby_versions.json
+curl -s https://endoflife.date/api/v1/products/ruby | \
+  jq '{ruby: [.result.releases | sort_by(.releaseDate) | reverse | .[] | select(.isEol == false) | .name] | reverse}' \
+  > .ruby_versions.json
 ```
 
 **`.ruby_versions.json` Format:**

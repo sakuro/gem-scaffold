@@ -121,11 +121,6 @@ jobs:
 
         Before merging this PR, ensure the following requirements are met:
 
-        ### GitHub Repository Settings
-        - [ ] **Workflow permissions**: Set to "Read and write permissions"
-        - [ ] **Pull request permissions**: Check "Allow GitHub Actions to create and approve pull requests"
-        - [ ] Configure at: https://github.com/${{ github.repository }}/settings/actions
-
         ### Trusted Publishing Setup
         - [ ] **Pending Trusted Publisher**: Create on RubyGems.org for OIDC authentication
         - [ ] Configure at: https://rubygems.org/oidc/pending_trusted_publishers
@@ -136,7 +131,8 @@ jobs:
           - Workflow filename: `release-publish.yml`
           - Environment name: `release`
         - [ ] **Note**: Pending publisher will auto-convert to active publisher after first successful gem push
-        - [ ] **GitHub Environment**: Create `release` environment at https://github.com/${{ github.repository }}/settings/environments
+
+        **Note**: GitHub repository settings (workflow permissions, environment) are automatically configured by the initialization script.
         - [ ] Guide: https://guides.rubygems.org/trusted-publishing/releasing-gems/
 
         ### RubyGems.org Setup

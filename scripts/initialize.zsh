@@ -6,7 +6,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 # Check required commands
-for cmd in gh mise jq git; do
+for cmd in gh mise jq git curl; do
   if ! command -v "$cmd" &>/dev/null; then
     echo "Error: Required command '$cmd' is not installed" >&2
     exit 1
@@ -92,7 +92,9 @@ inplace .github/workflows/update-ruby-versions.yml sed \
   -e "s|cron: '[^']*'|cron: $cron_schedule|"
 
 # Generate .ruby_versions.json
-scripts/update-ruby-versions.zsh > .ruby_versions.json
+curl -s https://endoflife.date/api/v1/products/ruby | \
+  jq '{ruby: [.result.releases | sort_by(.releaseDate) | reverse | .[] | select(.isEol == false) | .name] | reverse}' \
+  > .ruby_versions.json
 
 # Trust mise configuration to use correct Ruby version
 mise trust
@@ -275,10 +277,8 @@ Bug reports and pull requests are welcome on GitHub at ${repo_url}.
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
 EOF
 
-# Remove this script and other temporary setup scripts (except update-ruby-versions.zsh)
-scripts_to_remove=(scripts/*.zsh)
-scripts_to_remove=(${scripts_to_remove:#scripts/update-ruby-versions.zsh})
-git rm -f "${scripts_to_remove[@]}"
+# Remove initialization script and scripts directory
+git rm -rf scripts
 
 # Generate binstubs for common gems (using mise to ensure correct Ruby version)
 mise exec -- bundle install --quiet
