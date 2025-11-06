@@ -19,9 +19,6 @@ repo_name=$(basename "$PWD")
 path_name=$(echo "$repo_name" | tr '-' '/')
 underscore_name=$(echo "$repo_name" | tr '-' '_')
 
-# Generate class name with :: separator
-class_name=$(echo "$repo_name" | tr '-' '_' | sed -E 's/(^|_)(.)/\U\2/g' | tr '_' ':' | sed 's/:/::/g')
-
 # Generate module nesting for Ruby files
 # Example: "my-awesome-gem" -> ["My", "Awesome", "Gem"]
 IFS='-' read -rA parts <<< "$repo_name"
@@ -29,6 +26,9 @@ module_names=()
 for part in "${parts[@]}"; do
   module_names+=($(echo "$part" | sed -E 's/^(.)/\U\1/'))
 done
+
+# Generate class name with :: separator from module_names
+class_name="${(j.::.)module_names}"
 
 # Replace content in files
 files_to_update=(
