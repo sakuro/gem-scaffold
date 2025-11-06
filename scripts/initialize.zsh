@@ -119,6 +119,9 @@ git rm -f "${scripts_to_remove[@]}"
 mise exec -- bundle install --quiet
 mise exec -- bundle binstubs docquet irb rake rspec-core rubocop yard --force 2>/dev/null || true
 
+# Install RuboCop configuration via docquet
+mise exec -- bundle exec docquet install-config
+
 # Amend the initial commit with all changes
 git add .
 git commit --amend -m ":new: Initial commit"
