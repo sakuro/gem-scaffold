@@ -45,6 +45,9 @@ author_name=$(git config user.name)
 author_email=$(git config user.email)
 current_year=$(date +%Y)
 
+# Get repository URL from GitHub
+repo_url=$(gh repo view --json url -q .url)
+
 # Replace content in files (README.md is excluded as it contains template instructions)
 # Note: lib/sig files are excluded as they will be completely rewritten later
 files_to_update=(
@@ -71,10 +74,11 @@ git mv gem-scaffold.gemspec "${repo_name}.gemspec"
 inplace "${repo_name}.gemspec" sed \
   -e "s/required_ruby_version = \">= [0-9.]*\"/required_ruby_version = \">= $min_ruby_version\"/"
 
-# Update author information in gemspec
+# Update author information and URLs in gemspec
 inplace "${repo_name}.gemspec" sed \
   -e "s/spec.authors = \\[\"[^\"]*\"\\]/spec.authors = [\"$author_name\"]/" \
-  -e "s/spec.email = \\[\"[^\"]*\"\\]/spec.email = [\"$author_email\"]/"
+  -e "s/spec.email = \\[\"[^\"]*\"\\]/spec.email = [\"$author_email\"]/" \
+  -e "s|spec.homepage = \"[^\"]*\"|spec.homepage = \"$repo_url\"|"
 
 # Update LICENSE.txt with current year and author
 inplace LICENSE.txt sed \
@@ -186,7 +190,7 @@ After checking out the repo, run \`bin/setup\` to install dependencies. Then, ru
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/YOUR_USERNAME/${repo_name}.
+Bug reports and pull requests are welcome on GitHub at ${repo_url}.
 
 ## License
 
