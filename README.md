@@ -4,13 +4,16 @@ A template repository for creating Ruby gems with automated Ruby version managem
 
 ## Usage
 
-1. Clone this repository with your gem name:
+1. Click the "Use this template" button on GitHub to create a new repository with your gem name
+   - See [Creating a repository from a template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)
+
+2. Clone your new repository:
    ```bash
-   git clone https://github.com/sakuro/gem-scaffold.git my-gem-name
+   git clone https://github.com/YOUR_USERNAME/my-gem-name.git
    cd my-gem-name
    ```
 
-2. Run the initialization script:
+3. Run the initialization script:
    ```bash
    ./scripts/initialize.zsh
    ```
@@ -22,9 +25,8 @@ A template repository for creating Ruby gems with automated Ruby version managem
    - Create initial `.ruby_versions.json`
    - Remove setup scripts and amend changes into initial commit
 
-3. Push to your new repository:
+4. Push the initialized changes:
    ```bash
-   git remote set-url origin https://github.com/YOUR_USERNAME/my-gem-name.git
    git push -f origin main
    ```
 
