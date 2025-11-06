@@ -78,6 +78,11 @@ inplace "${repo_name}.gemspec" sed \
 inplace LICENSE.txt sed \
   -e "s/Copyright (c) [0-9]\\{4\\} .*/Copyright (c) $current_year $author_name/"
 
+# Get latest zeitwerk version and update gemspec
+zeitwerk_version=$(mise exec -- gem search --remote --exact zeitwerk | grep "^zeitwerk" | sed -E 's/^zeitwerk \(([0-9]+\.[0-9]+)\..*/\1/')
+inplace "${repo_name}.gemspec" sed \
+  -e "s/\"zeitwerk\", \"~> [0-9.]*\"/\"zeitwerk\", \"~> $zeitwerk_version\"/"
+
 # Remove scaffold files (will be completely rewritten later)
 git rm -f lib/gem/scaffold.rb lib/gem/scaffold/version.rb sig/gem/scaffold.rbs
 [[ -d lib/gem/scaffold ]] && rmdir lib/gem/scaffold
