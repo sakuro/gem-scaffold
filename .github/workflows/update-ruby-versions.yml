@@ -3,9 +3,8 @@ name: Update Ruby Versions
 # Runs daily to keep .ruby_versions.json up-to-date with all maintained Ruby versions
 on:
   schedule:
-    # Run at 00:00 UTC every day
-    # You can generate a repository-specific schedule using: scripts/generate-cron-schedule.zsh
-    - cron: '0 0 * * *'
+    # Run at 13:23 UTC every day (repository-specific time to distribute API load)
+    - cron: '23 13 * * *'
   workflow_dispatch:
 
 jobs:
