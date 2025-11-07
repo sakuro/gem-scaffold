@@ -364,8 +364,9 @@ echo "$content" > "sig/${path_name}.rbs"
 # Generate README.md
 generate-readme
 
-# Remove initialization script
+# Remove files only needed for template repository
 git rm bin/initialize
+git rm .github/workflows/ADOPTION.md
 
 # Generate binstubs for common gems (using mise to ensure correct Ruby version)
 mise exec -- bundle install --quiet
