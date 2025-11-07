@@ -13,7 +13,7 @@ set -euxo pipefail
 cd "$(dirname "$0")/.."
 
 # Check required commands
-for cmd in gh mise jq git curl; do
+for cmd in curl gh git jq mise openssl ruby; do
   if ! command -v "$cmd" &>/dev/null; then
     echo "Error: Required command '$cmd' is not installed" >&2
     exit 1
