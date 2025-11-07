@@ -12,7 +12,7 @@ The initialization script requires the following commands:
 - **[jq](https://jqlang.github.io/jq/)** - JSON processor
 - **[curl](https://curl.se/)** - HTTP client (usually pre-installed)
 - **[openssl](https://www.openssl.org/)** - Cryptography toolkit (usually pre-installed)
-- **git** - Version control (usually pre-installed)
+- **[git](https://git-scm.com/)** - Version control (usually pre-installed)
 
 ## Usage
 
