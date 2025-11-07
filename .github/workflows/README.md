@@ -204,6 +204,18 @@ end
 - Initial release
 ```
 
+**Rakefile** provides the following tasks:
+- `rake` or `rake default` - Run tests and RuboCop (default task)
+- `rake spec` - Run RSpec tests
+- `rake rubocop` - Run RuboCop linter
+- `rake doc` - Generate YARD API documentation
+- `rake clean` - Remove temporary files (coverage, .rspec_status, .yardoc)
+- `rake clobber` - Remove all generated files (doc/api, pkg)
+- `rake build` - Build gem package (from bundler/gem_tasks)
+- `rake install` - Build and install gem locally (from bundler/gem_tasks)
+
+Note: Do NOT use `rake release` as it conflicts with this template's release workflow tagging policy. Use the GitHub Actions release workflow instead (see Release Procedure below).
+
 ## Release Procedure
 
 ### Step 1: Prepare for Release
