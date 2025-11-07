@@ -5,27 +5,27 @@ source "https://rubygems.org"
 gemspec
 
 group :development, :test do
-  gem "rake"
+  gem "rake", require: false
 
-  gem "irb"
-  gem "repl_type_completor"
+  gem "irb", require: false
+  gem "repl_type_completor", require: false
 end
 
 group :development do
   # RuboCop
-  gem "docquet" # An opionated RuboCop config tool
-  gem "rubocop"
-  gem "rubocop-performance"
-  gem "rubocop-rake"
-  gem "rubocop-rspec"
+  gem "docquet", require: false # An opionated RuboCop config tool
+  gem "rubocop", require: false
+  gem "rubocop-performance", require: false
+  gem "rubocop-rake", require: false
+  gem "rubocop-rspec", require: false
 
   # YARD
-  gem "redcarpet"
-  gem "yard", github: "lsegal/yard" # Version with Data.define support
+  gem "redcarpet", require: false
+  gem "yard", github: "lsegal/yard", require: false # Version with Data.define support
 end
 
 group :test do
   # RSpec & SimpleCov
-  gem "rspec"
-  gem "simplecov"
+  gem "rspec", require: false
+  gem "simplecov", require: false
 end
