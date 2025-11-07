@@ -61,12 +61,10 @@ The initialization script creates a fully-configured gem with:
 ### Code Structure
 - **Zeitwerk autoloading**: Automatic code loading with proper namespace handling
 - **Proper module nesting**: Multi-level module structure based on gem name (e.g., `my-awesome-gem` → `My::Awesome::Gem`)
-- **RBS type signatures**: Type definition files in `sig/` directory
 
 ### Development Tools
 - **RSpec with SimpleCov**: Testing framework with code coverage analysis (configurable via `.simplecov`)
 - **RuboCop with docquet**: Code style enforcement with [docquet](https://github.com/sakuro/docquet) configuration
-- **Pre-generated binstubs**: Executables for common tools (docquet, irb, rake, rspec, rubocop, yard)
 - **Mise integration**: Development environment uses minimum supported Ruby version from `.ruby_versions.json`
 
 ### CI/CD
