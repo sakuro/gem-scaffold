@@ -26,10 +26,16 @@ jobs:
             jq '{ruby: [.[] | select(.status | test("maintenance")) | {name, date}] | sort_by(.date) | map(.name | tostring)}' \
             > .ruby_versions.json
 
-      - name: Update .rubocop.yml TargetRubyVersion
+      - name: Update Ruby version in configuration files
         run: |
           min_version=$(jq -r '.ruby[0]' .ruby_versions.json)
           sed -i "s/TargetRubyVersion: [0-9.]\+/TargetRubyVersion: $min_version/" .rubocop.yml
+
+          # Find gemspec file (name varies per gem)
+          gemspec_file=$(ls *.gemspec | head -n 1)
+          if [ -n "$gemspec_file" ]; then
+            sed -i "s/required_ruby_version = \">= [0-9.]\+\"/required_ruby_version = \">= $min_version\"/" "$gemspec_file"
+          fi
 
       - name: Setup Git User
         uses: git-actions/set-user@v1
@@ -39,16 +45,16 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           # Check if there are changes
-          if git diff --quiet .ruby_versions.json .rubocop.yml; then
-            echo "No changes to .ruby_versions.json or .rubocop.yml"
+          if git diff --quiet .ruby_versions.json .rubocop.yml *.gemspec; then
+            echo "No changes detected"
             exit 0
           fi
 
           # Create branch and commit
           branch="update-ruby-versions"
           git checkout -b "$branch"
-          git add .ruby_versions.json .rubocop.yml
-          git commit -m ":arrow_up: Update Ruby versions and RuboCop target version"
+          git add .ruby_versions.json .rubocop.yml *.gemspec
+          git commit -m ":arrow_up: Update Ruby versions and version requirements"
           git push -f origin "$branch"
 
           # Check if PR already exists
@@ -64,5 +70,6 @@ jobs:
           This PR updates:
           - `.ruby_versions.json` with all maintained Ruby versions
           - `.rubocop.yml` TargetRubyVersion to match the minimum Ruby version
+          - `*.gemspec` required_ruby_version to match the minimum Ruby version
           EOF
           gh pr create --title ":arrow_up: Update Ruby versions" --body-file /tmp/pr-body.md
