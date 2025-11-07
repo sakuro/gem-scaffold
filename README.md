@@ -79,3 +79,11 @@ The initialization script creates a fully-configured gem with:
 ## License
 
 This template is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+### License for Generated Code
+
+Code generated from this template can be licensed under any license chosen by the author. The initialization script:
+- Preserves this template's MIT license as `LICENSE-TEMPLATE.txt` (for template-derived code)
+- Creates a new `LICENSE.txt` (MIT) with the author's name and year (for the generated gem)
+
+Authors are free to replace `LICENSE.txt` with any license of their choosing.
