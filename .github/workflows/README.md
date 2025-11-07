@@ -335,7 +335,7 @@ The Release Publishing workflow will automatically:
 Ruby versions are automatically managed through `.ruby_versions.json`, which is maintained by the `update-ruby-versions.yml` workflow.
 
 **Automatic Updates:**
-- The workflow runs daily and fetches the latest maintained Ruby versions from [endoflife.date API](https://endoflife.date/ruby)
+- The workflow runs twice yearly and fetches the latest maintained Ruby versions from [Ruby's official branches.yml](https://github.com/ruby/www.ruby-lang.org/blob/master/_data/branches.yml)
 - Automatically updates `.ruby_versions.json` with all maintained versions (typically 3-4 versions)
 - Creates a pull request when changes are detected
 - All workflows (CI, release validation, and release publishing) automatically use the updated versions
@@ -348,8 +348,10 @@ You can manually trigger the update workflow:
 gh workflow run update-ruby-versions.yml
 
 # Or generate .ruby_versions.json locally
-curl -s https://endoflife.date/api/v1/products/ruby | \
-  jq '{ruby: [.result.releases | sort_by(.releaseDate) | reverse | .[] | select(.isEol == false) | .name] | reverse}' \
+gh api -H "Accept: application/vnd.github.raw" \
+  repos/ruby/www.ruby-lang.org/contents/_data/branches.yml | \
+  ruby -ryaml -rjson -e 'puts JSON.generate(YAML.safe_load(ARGF.read, permitted_classes: [Date]))' | \
+  jq '{ruby: [.[] | select(.status | test("maintenance")) | {name, date}] | sort_by(.date) | map(.name | tostring)]}' \
   > .ruby_versions.json
 ```
 

@@ -8,11 +8,10 @@ The initialization script requires the following commands:
 
 - **[zsh](https://www.zsh.org/)** - Z shell (usually pre-installed on macOS/Linux)
 - **[gh](https://cli.github.com/)** - GitHub CLI for repository configuration
-- **[mise](https://mise.jdx.dev/)** - Development environment manager
-- **[jq](https://jqlang.github.io/jq/)** - JSON processor
-- **[curl](https://curl.se/)** - HTTP client (usually pre-installed)
-- **[openssl](https://www.openssl.org/)** - Cryptography toolkit (usually pre-installed)
 - **[git](https://git-scm.com/)** - Version control (usually pre-installed)
+- **[jq](https://jqlang.github.io/jq/)** - JSON processor
+- **[mise](https://mise.jdx.dev/)** - Development environment manager
+- **[openssl](https://www.openssl.org/)** - Cryptography toolkit (usually pre-installed)
 
 ## Usage
 
@@ -38,7 +37,6 @@ The initialization script requires the following commands:
    - Update all files with your gem name
    - Generate proper Ruby module namespacing
    - Set up repository-specific cron schedule
-   - Create initial `.ruby_versions.json`
    - Configure GitHub settings automatically
    - Remove setup script and amend changes into initial commit
 
