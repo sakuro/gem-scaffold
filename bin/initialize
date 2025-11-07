@@ -176,13 +176,14 @@ Next steps:
   2. Review the release preparation checklist:
      See .github/workflows/release-preparation.yml for details
 
-  3. Push your changes:
+  3. Check the license files:
+     MIT License generated in LICENSE.txt
+     To use a different license, replace and commit before pushing
+
+     Template code follows MIT License in LICENSE-TEMPLATE.txt
+
+  4. Push your changes:
      git push -f origin main
-
-  4. Generated MIT License in LICENSE.txt
-     If you want to use a different license, replace the license file accordingly
-
-     Template-derived code follows the MIT License in LICENSE-TEMPLATE.txt
 
 EOF
 }
