@@ -72,10 +72,10 @@ jobs:
           Automated update of maintained Ruby versions from Ruby's official branches.yml.
 
           This PR updates:
-          - `.rubocop.yml` TargetRubyVersion to match the minimum Ruby version
-          - `mise.toml` ruby version to match the minimum Ruby version
           - `.github/workflows/ci.yml` test matrix to include all maintained Ruby versions
           - `.github/workflows/release-*.yml` ruby-version to match the minimum Ruby version
+          - `.rubocop.yml` TargetRubyVersion to match the minimum Ruby version
           - `*.gemspec` required_ruby_version to match the minimum Ruby version
+          - `mise.toml` ruby version to match the minimum Ruby version
           EOF
           gh pr create --title ":arrow_up: Update Ruby versions" --body-file /tmp/pr-body.md

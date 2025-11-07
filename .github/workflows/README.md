@@ -111,11 +111,11 @@ Automatically maintains Ruby version configuration with the latest maintained Ru
 **Actions:**
 - Fetches maintained Ruby versions from [Ruby's official branches.yml](https://github.com/ruby/www.ruby-lang.org/blob/master/_data/branches.yml)
 - Updates Ruby version configuration in multiple files:
-  - `.rubocop.yml` TargetRubyVersion
-  - `mise.toml` ruby version
   - `.github/workflows/ci.yml` test matrix
   - `.github/workflows/release-*.yml` ruby-version
+  - `.rubocop.yml` TargetRubyVersion
   - `*.gemspec` required_ruby_version
+  - `mise.toml` ruby version
 - Creates a pull request if changes are detected
 
 **Schedule Optimization:**
@@ -340,11 +340,11 @@ Ruby versions are automatically managed by the `update-ruby-versions.yml` workfl
 **Automatic Updates:**
 - The workflow runs twice yearly and fetches the latest maintained Ruby versions from [Ruby's official branches.yml](https://github.com/ruby/www.ruby-lang.org/blob/master/_data/branches.yml)
 - Automatically updates Ruby version configuration in multiple files:
-  - `.rubocop.yml` TargetRubyVersion
-  - `mise.toml` ruby version
   - `.github/workflows/ci.yml` test matrix
   - `.github/workflows/release-*.yml` ruby-version
+  - `.rubocop.yml` TargetRubyVersion
   - `*.gemspec` required_ruby_version
+  - `mise.toml` ruby version
 - Creates a pull request when changes are detected
 - All workflows (CI, release validation, and release publishing) use these updated versions
 
