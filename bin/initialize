@@ -223,9 +223,6 @@ done
 # Generate class name with :: separator from module_names
 class_name="${(j.::.)module_names}"
 
-# Get minimum Ruby version from .ruby_versions.json
-min_ruby_version=$(jq -r '.ruby[0]' .ruby_versions.json)
-
 # Get author information from git config
 author_name=$(git config user.name)
 author_email=$(git config user.email)
@@ -260,8 +257,7 @@ git mv gem-scaffold.gemspec "${repo_name}.gemspec"
 inplace "${repo_name}.gemspec" sed \
   -e "s/spec.authors = \\[\"[^\"]*\"\\]/spec.authors = [\"$author_name\"]/" \
   -e "s/spec.email = \\[\"[^\"]*\"\\]/spec.email = [\"$author_email\"]/" \
-  -e "s|spec.homepage = \"[^\"]*\"|spec.homepage = \"$repo_url\"|" \
-  -e "s/required_ruby_version = \">= [0-9.]*\"/required_ruby_version = \">= $min_ruby_version\"/"
+  -e "s|spec.homepage = \"[^\"]*\"|spec.homepage = \"$repo_url\"|"
 
 # Preserve template's MIT license
 cp LICENSE.txt LICENSE-TEMPLATE.txt
