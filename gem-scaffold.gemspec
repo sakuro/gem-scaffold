@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "json"
 require_relative "lib/gem/scaffold/version"
 
 Gem::Specification.new do |spec|
@@ -12,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.description = "gem-scaffold"
   spec.homepage = "https://github.com/sakuro/gem-scaffold"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.2"
+  spec.required_ruby_version = ">= #{JSON.parse(File.read(File.join(__dir__, ".ruby_versions.json")))["ruby"].first}"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "#{spec.homepage}.git"
