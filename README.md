@@ -76,14 +76,6 @@ The initialization script creates a fully-configured gem with:
 - **Dependency versions**: Latest compatible versions detected from remote (zeitwerk, etc.)
 - **Required Ruby version**: Set to oldest maintained version from `.ruby_versions.json`
 
-## Development
-
-After initialization:
-
-- Run `bin/setup` to install dependencies
-- Run `rake spec` to run tests
-- Run `bin/console` for an interactive prompt
-
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
