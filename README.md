@@ -75,7 +75,6 @@ The initialization script creates a fully-configured gem with:
 ### Automatic Configuration
 - **Author information**: Extracted from git config (user.name, user.email)
 - **Dependency versions**: Latest compatible versions detected from remote (zeitwerk, etc.)
-- **Required Ruby version**: Set to oldest maintained version from `.ruby_versions.json`
 
 ## License
 
