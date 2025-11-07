@@ -90,13 +90,30 @@ gh api --method PUT repos/:owner/:repo/actions/permissions/workflow \
   -F can_approve_pull_request_reviews=true
 ```
 
-#### 5. Update Gemspec (Optional)
+#### 5. Update Gemspec, RuboCop, and mise.toml
 
-Make `required_ruby_version` dynamic:
+Set `required_ruby_version` to the minimum version from `.ruby_versions.json`:
 
 ```ruby
-spec.required_ruby_version = ">= #{JSON.parse(File.read('.ruby_versions.json'))['ruby'].first}"
+# In your gemspec file
+spec.required_ruby_version = ">= 3.2"  # Use the first version from .ruby_versions.json
 ```
+
+Similarly, update `.rubocop.yml` and `mise.toml` to match:
+
+```yaml
+# .rubocop.yml
+AllCops:
+  TargetRubyVersion: 3.2
+```
+
+```toml
+# mise.toml
+[tools]
+ruby = "3.2"
+```
+
+**Note**: The `update-ruby-versions.yml` workflow will automatically update these values when Ruby versions change, so you only need to set them once manually.
 
 ### Testing Phase 1
 
