@@ -12,6 +12,9 @@ group :development, :test do
 end
 
 group :development do
+  # Ruby Language Server
+  gem "ruby-lsp", require: false
+
   # RuboCop
   gem "docquet", require: false # An opionated RuboCop config tool
   gem "rubocop", require: false

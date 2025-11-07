@@ -63,6 +63,7 @@ The initialization script creates a fully-configured gem with:
 - **Proper module nesting**: Multi-level module structure based on gem name (e.g., `my-awesome-gem` → `My::Awesome::Gem`)
 
 ### Development Tools
+- **Ruby LSP**: Language server for IDE features and code intelligence
 - **RSpec with SimpleCov**: Testing framework with code coverage analysis (configurable via `.simplecov`)
 - **RuboCop with docquet**: Code style enforcement with [docquet](https://github.com/sakuro/docquet) configuration
 - **Mise integration**: Development environment uses minimum supported Ruby version from `.ruby_versions.json`
