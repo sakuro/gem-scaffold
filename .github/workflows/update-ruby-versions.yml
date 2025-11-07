@@ -1,10 +1,10 @@
 name: Update Ruby Versions
 
 # Runs twice a year to keep .ruby_versions.json up-to-date with all maintained Ruby versions
-# Aligned with Ruby's release schedule: new versions on Dec 25, EOL on Mar 31
+# Data source: Ruby's official branches.yml from www.ruby-lang.org repository
 on:
   schedule:
-    # Run at 13:23 UTC on Jan 2-8 and Apr 2-8 (1-week window to account for endoflife.date update delays)
+    # Run at 13:23 UTC on Jan 2-8 and Apr 2-8 (1-week window aligned with Ruby's release schedule)
     - cron: '23 13 2-8 1,4 *'
   workflow_dispatch:
 
@@ -18,9 +18,12 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Generate ruby.json
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          curl -s https://endoflife.date/api/v1/products/ruby | \
-            jq '{ruby: [.result.releases | sort_by(.releaseDate) | reverse | .[] | select(.isEol == false) | .name] | reverse}' \
+          gh api -H "Accept: application/vnd.github.raw" repos/ruby/www.ruby-lang.org/contents/_data/branches.yml | \
+            yq -o json | \
+            jq '{ruby: [.[] | select(.status | test("maintenance")) | {name, date}] | sort_by(.date) | map(.name | tostring)}' \
             > .ruby_versions.json
 
       - name: Setup Git User
@@ -51,7 +54,7 @@ jobs:
 
           # Create PR body in temporary file
           cat > /tmp/pr-body.md <<'EOF'
-          Automated update of maintained Ruby versions from endoflife.date API.
+          Automated update of maintained Ruby versions from Ruby's official branches.yml.
 
           This PR updates `.ruby_versions.json` with all maintained Ruby versions.
           EOF

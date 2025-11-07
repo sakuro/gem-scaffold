@@ -50,7 +50,7 @@ The initialization script requires the following commands:
 
 This template provides a modern Ruby gem setup with automated Ruby version management:
 
-- **Always up-to-date Ruby support**: Automatically tracks maintained Ruby versions from [endoflife.date](https://endoflife.date/ruby)
+- **Always up-to-date Ruby support**: Automatically tracks maintained Ruby versions from [Ruby's official branches.yml](https://github.com/ruby/www.ruby-lang.org/blob/master/_data/branches.yml)
 - **Zero-maintenance CI matrix**: Tests run against current Ruby versions without manual updates
 - **Repository-specific scheduling**: Each cloned repository gets a unique cron schedule to distribute API load
 - **One-command initialization**: Single script transforms the template into a ready-to-use gem

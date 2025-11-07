@@ -195,8 +195,9 @@ inplace .github/workflows/update-ruby-versions.yml sed \
   -e "s|cron: '[^']*'|cron: $cron_schedule|"
 
 # Generate .ruby_versions.json
-curl -s https://endoflife.date/api/v1/products/ruby | \
-  jq '{ruby: [.result.releases | sort_by(.releaseDate) | reverse | .[] | select(.isEol == false) | .name] | reverse}' \
+gh api -H "Accept: application/vnd.github.raw" repos/ruby/www.ruby-lang.org/contents/_data/branches.yml | \
+  ruby -ryaml -rjson -e 'puts JSON.generate(YAML.safe_load(ARGF.read, permitted_classes: [Date]))' | \
+  jq '{ruby: [.[] | select(.status | test("maintenance")) | {name, date}] | sort_by(.date) | map(.name | tostring)}' \
   > .ruby_versions.json
 
 # Trust mise configuration to use correct Ruby version

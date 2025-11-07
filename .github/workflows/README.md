@@ -110,7 +110,7 @@ Automatically maintains `.ruby_versions.json` with the latest maintained Ruby ve
 - Manual dispatch
 
 **Actions:**
-- Fetches maintained Ruby versions from [endoflife.date API](https://endoflife.date/ruby)
+- Fetches maintained Ruby versions from [Ruby's official branches.yml](https://github.com/ruby/www.ruby-lang.org/blob/master/_data/branches.yml)
 - Updates `.ruby_versions.json` with all maintained versions (excluding EOL versions)
 - Creates a pull request if changes are detected
 
@@ -118,7 +118,7 @@ Automatically maintains `.ruby_versions.json` with the latest maintained Ruby ve
 - Aligned with Ruby's predictable release schedule:
   - New Ruby versions are released on December 25th
   - Ruby versions reach EOL on March 31st
-- Runs daily during January 2-8 and April 2-8 (1-week window to account for endoflife.date update delays)
+- Runs daily during January 2-8 and April 2-8 (1-week window to capture updates)
 - Reduces API calls by 98% (from 365/year to 14/year) while ensuring reliable updates
 - Repository-specific time (e.g., 13:23 UTC) distributes API load across different repositories
 - Workflow is idempotent: only creates PRs when changes are detected
@@ -372,7 +372,7 @@ The workflow runs twice a year during two 1-week windows: January 2-8 and April 
 - New Ruby versions are released on December 25th (checked during January 2-8)
 - Ruby versions reach EOL on March 31st (checked during April 2-8)
 
-The 1-week window accounts for potential delays in endoflife.date updates (which are maintained manually). The workflow is idempotent and only creates PRs when changes are detected, so multiple runs during the window cause no issues.
+The 1-week window provides flexibility to capture updates after Ruby's release dates. The workflow is idempotent and only creates PRs when changes are detected, so multiple runs during the window cause no issues.
 
 The specific time (e.g., 13:23 UTC) is automatically set during initialization to distribute API load across different repositories. This schedule reduces API calls by 98% (from 365/year to 14/year) while ensuring reliable updates after Ruby's regular release and EOL dates.
 
