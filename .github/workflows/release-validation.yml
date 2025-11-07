@@ -24,14 +24,10 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Get minimum supported Ruby version
-      id: ruby-version
-      run: echo "version=$(jq -r '.ruby[0]' .ruby_versions.json)" >> $GITHUB_OUTPUT
-
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ steps.ruby-version.outputs.version }}
+        ruby-version: "3.2"
         bundler-cache: true
 
     - name: Extract version from branch name

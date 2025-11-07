@@ -31,6 +31,8 @@ jobs:
           min_version=$(jq -r '.ruby[0]' .ruby_versions.json)
           sed -i "s/TargetRubyVersion: [0-9.]\+/TargetRubyVersion: $min_version/" .rubocop.yml
           sed -i "s/ruby = \"[0-9.]\+\"/ruby = \"$min_version\"/" mise.toml
+          sed -i "s/ruby-version: \"[0-9.]\+\"/ruby-version: \"$min_version\"/" .github/workflows/release-validation.yml
+          sed -i "s/ruby-version: \"[0-9.]\+\"/ruby-version: \"$min_version\"/" .github/workflows/release-publish.yml
 
           # Find gemspec file (name varies per gem)
           gemspec_file=$(ls *.gemspec | head -n 1)
@@ -46,7 +48,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           # Check if there are changes
-          if git diff --quiet .ruby_versions.json .rubocop.yml mise.toml *.gemspec; then
+          if git diff --quiet .ruby_versions.json .rubocop.yml mise.toml .github/workflows/release-*.yml *.gemspec; then
             echo "No changes detected"
             exit 0
           fi
@@ -54,7 +56,7 @@ jobs:
           # Create branch and commit
           branch="update-ruby-versions"
           git checkout -b "$branch"
-          git add .ruby_versions.json .rubocop.yml mise.toml *.gemspec
+          git add .ruby_versions.json .rubocop.yml mise.toml .github/workflows/release-*.yml *.gemspec
           git commit -m ":arrow_up: Update Ruby versions and version requirements"
           git push -f origin "$branch"
 
@@ -72,6 +74,7 @@ jobs:
           - `.ruby_versions.json` with all maintained Ruby versions
           - `.rubocop.yml` TargetRubyVersion to match the minimum Ruby version
           - `mise.toml` ruby version to match the minimum Ruby version
+          - `.github/workflows/release-*.yml` ruby-version to match the minimum Ruby version
           - `*.gemspec` required_ruby_version to match the minimum Ruby version
           EOF
           gh pr create --title ":arrow_up: Update Ruby versions" --body-file /tmp/pr-body.md
