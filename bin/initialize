@@ -20,15 +20,6 @@ for cmd in gh git jq mise openssl; do
   fi
 done
 
-# Inline edit: apply command to file in-place
-# Usage: inplace FILE COMMAND [ARGS...]
-# Example: inplace myfile.txt sed 's/foo/bar/g'
-function inplace()
-{
-  local file=$1
-  shift
-  (rm "$file" && "$@" > "$file") < "$file"
-}
 
 # Add indentation to each line of input
 # Usage: indent N [INPUT]
@@ -198,9 +189,11 @@ EOF
 
 # Update Ruby Versions workflow schedule
 cron_schedule=$(cron-schedule)
-inplace .github/workflows/update-ruby-versions.yml sed \
+sed -i.bak \
   -e "s|# Run at .* UTC .*|# Run at repository-specific time on Jan 2-8 and Apr 2-8 to distribute API load|" \
-  -e "s|cron: '[^']*'|cron: $cron_schedule|"
+  -e "s|cron: '[^']*'|cron: $cron_schedule|" \
+  .github/workflows/update-ruby-versions.yml
+rm -f .github/workflows/update-ruby-versions.yml.bak
 
 # Trust mise configuration to use correct Ruby version
 mise trust
@@ -241,10 +234,12 @@ files_to_update=(
 
 for file in "${files_to_update[@]}"; do
   [[ -f "$file" ]] || continue
-  inplace "$file" sed \
+  sed -i.bak \
     -e "s/gem-scaffold/$repo_name/g" \
     -e "s/Gem::Scaffold/$class_name/g" \
-    -e "s|gem/scaffold|$path_name|g"
+    -e "s|gem/scaffold|$path_name|g" \
+    "$file"
+  rm -f "$file.bak"
 done
 
 # Restore executable bit on bin/console (lost during sed inplace edit)
@@ -254,22 +249,28 @@ chmod +x bin/console
 git mv gem-scaffold.gemspec "${repo_name}.gemspec"
 
 # Update author information and URLs in gemspec
-inplace "${repo_name}.gemspec" sed \
+sed -i.bak \
   -e "s/spec.authors = \\[\"[^\"]*\"\\]/spec.authors = [\"$author_name\"]/" \
   -e "s/spec.email = \\[\"[^\"]*\"\\]/spec.email = [\"$author_email\"]/" \
-  -e "s|spec.homepage = \"[^\"]*\"|spec.homepage = \"$repo_url\"|"
+  -e "s|spec.homepage = \"[^\"]*\"|spec.homepage = \"$repo_url\"|" \
+  "${repo_name}.gemspec"
+rm -f "${repo_name}.gemspec.bak"
 
 # Preserve template's MIT license
 cp LICENSE.txt LICENSE-TEMPLATE.txt
 
 # Update LICENSE.txt with current year and author
-inplace LICENSE.txt sed \
-  -e "s/Copyright (c) [0-9]\\{4\\} .*/Copyright (c) $current_year $author_name/"
+sed -i.bak \
+  -e "s/Copyright (c) [0-9]\\{4\\} .*/Copyright (c) $current_year $author_name/" \
+  LICENSE.txt
+rm -f LICENSE.txt.bak
 
 # Get latest zeitwerk version and update gemspec
 zeitwerk_version=$(mise exec -- gem search --remote --exact zeitwerk | grep "^zeitwerk" | sed -E 's/^zeitwerk \(([0-9]+\.[0-9]+)\..*/\1/')
-inplace "${repo_name}.gemspec" sed \
-  -e "s/\"zeitwerk\", \"~> [0-9.]*\"/\"zeitwerk\", \"~> $zeitwerk_version\"/"
+sed -i.bak \
+  -e "s/\"zeitwerk\", \"~> [0-9.]*\"/\"zeitwerk\", \"~> $zeitwerk_version\"/" \
+  "${repo_name}.gemspec"
+rm -f "${repo_name}.gemspec.bak"
 
 # Remove scaffold files (will be completely rewritten later)
 git rm -f lib/gem/scaffold.rb lib/gem/scaffold/version.rb sig/gem/scaffold.rbs
