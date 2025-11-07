@@ -66,11 +66,11 @@ The initialization script creates a fully-configured gem with:
 - **Ruby LSP**: Language server for IDE features and code intelligence
 - **RSpec with SimpleCov**: Testing framework with code coverage analysis (configurable via `.simplecov`)
 - **RuboCop with docquet**: Code style enforcement with [docquet](https://github.com/sakuro/docquet) configuration
-- **Mise integration**: Development environment uses minimum supported Ruby version from `.ruby_versions.json`
+- **Mise integration**: Development environment uses minimum supported Ruby version
 
 ### CI/CD
-- **Dynamic test matrix**: CI automatically tests against all maintained Ruby versions from `.ruby_versions.json`
-- **Twice-yearly Ruby version updates**: GitHub Actions workflow keeps `.ruby_versions.json` current (runs January 2-8 and April 2-8)
+- **Dynamic test matrix**: CI automatically tests against all maintained Ruby versions
+- **Twice-yearly Ruby version updates**: GitHub Actions workflow keeps Ruby versions current (runs January 2-8 and April 2-8)
 
 ### Automatic Configuration
 - **Author information**: Extracted from git config (user.name, user.email)

@@ -23,30 +23,12 @@ Each phase builds on the previous one, allowing gradual adoption.
 
 ### Required Files
 
-1. `.ruby_versions.json` - List of maintained Ruby versions
-2. `.github/workflows/ci.yml` - CI workflow with dynamic matrix
-3. `.github/workflows/update-ruby-versions.yml` - Auto-update workflow
+1. `.github/workflows/ci.yml` - CI workflow with matrix testing
+2. `.github/workflows/update-ruby-versions.yml` - Auto-update workflow
 
 ### Step-by-Step Instructions
 
-#### 1. Generate .ruby_versions.json
-
-```bash
-gh api -H "Accept: application/vnd.github.raw" \
-  repos/ruby/www.ruby-lang.org/contents/_data/branches.yml | \
-  ruby -ryaml -rjson -e 'puts JSON.generate(YAML.safe_load(ARGF.read, permitted_classes: [Date]))' | \
-  jq '{ruby: [.[] | select(.status | test("maintenance")) | {name, date}] | sort_by(.date) | map(.name | tostring)]}' \
-  > .ruby_versions.json
-```
-
-This creates a file like:
-```json
-{
-  "ruby": ["3.2", "3.3", "3.4"]
-}
-```
-
-#### 2. Copy CI Workflow
+#### 1. Copy CI Workflow
 
 ```bash
 # Copy from gem-scaffold repository
@@ -92,11 +74,11 @@ gh api --method PUT repos/:owner/:repo/actions/permissions/workflow \
 
 #### 5. Update Gemspec, RuboCop, and mise.toml
 
-Set `required_ruby_version` to the minimum version from `.ruby_versions.json`:
+Set `required_ruby_version` to the minimum maintained Ruby version:
 
 ```ruby
 # In your gemspec file
-spec.required_ruby_version = ">= 3.2"  # Use the first version from .ruby_versions.json
+spec.required_ruby_version = ">= 3.2"  # Minimum maintained version
 ```
 
 Similarly, update `.rubocop.yml` and `mise.toml` to match:
@@ -134,7 +116,7 @@ gh pr list  # Check if PR was created
 ### Commit Phase 1
 
 ```bash
-git add .ruby_versions.json .github/workflows/ci.yml .github/workflows/update-ruby-versions.yml
+git add .github/workflows/ci.yml .github/workflows/update-ruby-versions.yml
 git commit -m "Add automated Ruby version management"
 ```
 
@@ -260,7 +242,7 @@ gh workflow run release-preparation.yml -f version=1.2.3
 
 **What you get:**
 - Consistent Ruby version across all developers
-- Automatic switching based on `.ruby_versions.json`
+- Automatic version management via mise
 
 ### Step-by-Step Instructions
 
@@ -275,7 +257,7 @@ cp /path/to/gem-scaffold/mise.toml .
 mise trust
 
 # 4. Verify it works
-mise exec -- ruby --version  # Should use .ruby_versions.json[0]
+mise exec -- ruby --version  # Should use the minimum Ruby version
 ```
 
 ### Commit Phase 3
@@ -326,7 +308,6 @@ If your tests don't run via `bundle exec rake`, edit `.github/workflows/ci.yml` 
 ## Quick Reference
 
 ### Minimum Files for Phase 1
-- `.ruby_versions.json`
 - `.github/workflows/ci.yml`
 - `.github/workflows/update-ruby-versions.yml`
 
@@ -346,9 +327,6 @@ If your tests don't run via `bundle exec rake`, edit `.github/workflows/ci.yml` 
 ### Key Commands
 
 ```bash
-# Generate .ruby_versions.json
-gh api -H "Accept: application/vnd.github.raw" repos/ruby/www.ruby-lang.org/contents/_data/branches.yml | ruby -ryaml -rjson -e 'puts JSON.generate(YAML.safe_load(ARGF.read, permitted_classes: [Date]))' | jq '{ruby: [.[] | select(.status | test("maintenance")) | {name, date}] | sort_by(.date) | map(.name | tostring)]}' > .ruby_versions.json
-
 # Configure GitHub workflow permissions
 gh api --method PUT repos/:owner/:repo/actions/permissions/workflow -f default_workflow_permissions=write -F can_approve_pull_request_reviews=true
 

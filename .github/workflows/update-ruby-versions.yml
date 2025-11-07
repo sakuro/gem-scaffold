@@ -1,6 +1,6 @@
 name: Update Ruby Versions
 
-# Runs twice a year to keep .ruby_versions.json up-to-date with all maintained Ruby versions
+# Runs twice a year to keep Ruby version configuration up-to-date with all maintained Ruby versions
 # Data source: Ruby's official branches.yml from www.ruby-lang.org repository
 on:
   schedule:
@@ -17,19 +17,17 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Generate ruby.json
+      - name: Get Ruby versions and update files
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          gh api -H "Accept: application/vnd.github.raw" repos/ruby/www.ruby-lang.org/contents/_data/branches.yml | \
+          # Get Ruby versions directly from branches.yml
+          ruby_data=$(gh api -H "Accept: application/vnd.github.raw" repos/ruby/www.ruby-lang.org/contents/_data/branches.yml | \
             yq -o json | \
-            jq '{ruby: [.[] | select(.status | test("maintenance")) | {name, date}] | sort_by(.date) | map(.name | tostring)}' \
-            > .ruby_versions.json
+            jq '{ruby: [.[] | select(.status | test("maintenance")) | {name, date}] | sort_by(.date) | map(.name | tostring)]}')
 
-      - name: Update Ruby version in configuration files
-        run: |
-          min_version=$(jq -r '.ruby[0]' .ruby_versions.json)
-          ruby_array=$(jq -r '.ruby | map("\"" + . + "\"") | join(", ")' .ruby_versions.json)
+          min_version=$(echo "$ruby_data" | jq -r '.ruby[0]')
+          ruby_array=$(echo "$ruby_data" | jq -r '.ruby | map("\"" + . + "\"") | join(", ")')
 
           sed -i "s/TargetRubyVersion: [0-9.]\+/TargetRubyVersion: $min_version/" .rubocop.yml
           sed -i "s/ruby = \"[0-9.]\+\"/ruby = \"$min_version\"/" mise.toml
@@ -51,7 +49,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           # Check if there are changes
-          if git diff --quiet .ruby_versions.json .rubocop.yml mise.toml .github/workflows/ci.yml .github/workflows/release-*.yml *.gemspec; then
+          if git diff --quiet .rubocop.yml mise.toml .github/workflows/ci.yml .github/workflows/release-*.yml *.gemspec; then
             echo "No changes detected"
             exit 0
           fi
@@ -59,7 +57,7 @@ jobs:
           # Create branch and commit
           branch="update-ruby-versions"
           git checkout -b "$branch"
-          git add .ruby_versions.json .rubocop.yml mise.toml .github/workflows/ci.yml .github/workflows/release-*.yml *.gemspec
+          git add .rubocop.yml mise.toml .github/workflows/ci.yml .github/workflows/release-*.yml *.gemspec
           git commit -m ":arrow_up: Update Ruby versions and version requirements"
           git push -f origin "$branch"
 
@@ -74,7 +72,6 @@ jobs:
           Automated update of maintained Ruby versions from Ruby's official branches.yml.
 
           This PR updates:
-          - `.ruby_versions.json` with all maintained Ruby versions
           - `.rubocop.yml` TargetRubyVersion to match the minimum Ruby version
           - `mise.toml` ruby version to match the minimum Ruby version
           - `.github/workflows/ci.yml` test matrix to include all maintained Ruby versions

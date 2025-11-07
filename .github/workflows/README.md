@@ -23,12 +23,11 @@ Runs tests and quality checks across multiple Ruby versions.
 - Pull requests
 
 **Matrix Testing:**
-- Tests against Ruby versions defined in `.ruby_versions.json`
-- Automatically uses all maintained Ruby versions
+- Tests against all maintained Ruby versions
+- Ruby versions are defined in the workflow's matrix configuration
 - See [Ruby Maintenance Branches](https://www.ruby-lang.org/en/downloads/branches/) for current supported versions
 
 **Steps:**
-- Reads Ruby versions from `.ruby_versions.json`
 - Checks out code
 - Sets up Ruby with bundler cache
 - Runs `bundle exec rake` (default task)
@@ -61,7 +60,7 @@ Validates release PRs to ensure everything is correct before merging.
 - Pull requests to `main` branch (only for `release-v*` branches)
 
 **Ruby Version:**
-- Uses the minimum supported Ruby version from `.ruby_versions.json`
+- Uses the minimum supported Ruby version
 
 **Validations:**
 - Version format (must be `x.y.z`)
@@ -85,7 +84,7 @@ Publishes the gem to RubyGems.org and creates a GitHub release when a release PR
 - Pull request closure (only when merged and from `release-v*` branches)
 
 **Ruby Version:**
-- Uses the minimum supported Ruby version from `.ruby_versions.json`
+- Uses the minimum supported Ruby version
 
 **Actions:**
 - Extracts version from branch name
@@ -103,7 +102,7 @@ Publishes the gem to RubyGems.org and creates a GitHub release when a release PR
 
 ### 5. Update Ruby Versions Workflow (`update-ruby-versions.yml`)
 
-Automatically maintains `.ruby_versions.json` with the latest maintained Ruby versions.
+Automatically maintains Ruby version configuration with the latest maintained Ruby versions.
 
 **Triggers:**
 - Scheduled: Twice a year during January 2-8 and April 2-8 at a repository-specific time (set during initialization)
@@ -111,7 +110,12 @@ Automatically maintains `.ruby_versions.json` with the latest maintained Ruby ve
 
 **Actions:**
 - Fetches maintained Ruby versions from [Ruby's official branches.yml](https://github.com/ruby/www.ruby-lang.org/blob/master/_data/branches.yml)
-- Updates `.ruby_versions.json` with all maintained versions (excluding EOL versions)
+- Updates Ruby version configuration in multiple files:
+  - `.rubocop.yml` TargetRubyVersion
+  - `mise.toml` ruby version
+  - `.github/workflows/ci.yml` test matrix
+  - `.github/workflows/release-*.yml` ruby-version
+  - `*.gemspec` required_ruby_version
 - Creates a pull request if changes are detected
 
 **Schedule Optimization:**
@@ -168,7 +172,6 @@ Ensure your project has the following structure:
 
 ```
 your-gem/
-├── .ruby_versions.json       # Maintained Ruby versions (auto-updated)
 ├── lib/
 │   └── {gem_name}/
 │       └── version.rb        # Contains VERSION constant
@@ -332,13 +335,18 @@ The Release Publishing workflow will automatically:
 
 ### Ruby Version Management
 
-Ruby versions are automatically managed through `.ruby_versions.json`, which is maintained by the `update-ruby-versions.yml` workflow.
+Ruby versions are automatically managed by the `update-ruby-versions.yml` workflow.
 
 **Automatic Updates:**
 - The workflow runs twice yearly and fetches the latest maintained Ruby versions from [Ruby's official branches.yml](https://github.com/ruby/www.ruby-lang.org/blob/master/_data/branches.yml)
-- Automatically updates `.ruby_versions.json` with all maintained versions (typically 3-4 versions)
+- Automatically updates Ruby version configuration in multiple files:
+  - `.rubocop.yml` TargetRubyVersion
+  - `mise.toml` ruby version
+  - `.github/workflows/ci.yml` test matrix
+  - `.github/workflows/release-*.yml` ruby-version
+  - `*.gemspec` required_ruby_version
 - Creates a pull request when changes are detected
-- All workflows (CI, release validation, and release publishing) automatically use the updated versions
+- All workflows (CI, release validation, and release publishing) use these updated versions
 
 **Manual Updates:**
 You can manually trigger the update workflow:
@@ -346,28 +354,14 @@ You can manually trigger the update workflow:
 ```bash
 # Using GitHub CLI
 gh workflow run update-ruby-versions.yml
-
-# Or generate .ruby_versions.json locally
-gh api -H "Accept: application/vnd.github.raw" \
-  repos/ruby/www.ruby-lang.org/contents/_data/branches.yml | \
-  ruby -ryaml -rjson -e 'puts JSON.generate(YAML.safe_load(ARGF.read, permitted_classes: [Date]))' | \
-  jq '{ruby: [.[] | select(.status | test("maintenance")) | {name, date}] | sort_by(.date) | map(.name | tostring)]}' \
-  > .ruby_versions.json
 ```
 
-**`.ruby_versions.json` Format:**
-```json
-{
-  "ruby": ["3.2", "3.3", "3.4"]
-}
-```
+**Ruby Version Configuration:**
+- **Minimum version**: The oldest maintained Ruby version (e.g., 3.2)
+- **CI test matrix**: All maintained Ruby versions (e.g., ["3.2", "3.3", "3.4"])
+- **Typical count**: 3-4 versions simultaneously maintained
 
-**Note:** When a new Ruby version is released (e.g., Ruby 3.5 in December 2024), the array will temporarily contain 4 versions until the oldest version reaches EOL.
-
-**How Workflows Use Ruby Versions:**
-- **CI Workflow**: Tests against all versions in the `ruby` array (oldest to newest)
-- **Release Validation**: Uses the first (oldest) version as the minimum supported version
-- **Release Publishing**: Uses the first (oldest) version to build and publish the gem
+**Note:** When a new Ruby version is released (e.g., Ruby 3.5 in December 2024), there will temporarily be 4 versions until the oldest version reaches EOL.
 
 **Update Schedule:**
 The workflow runs twice a year during two 1-week windows: January 2-8 and April 2-8, aligned with Ruby's predictable release schedule:
