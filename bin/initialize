@@ -138,7 +138,10 @@ Bug reports and pull requests are welcome on GitHub at ${repo_url}.
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+TODO: Specify your license here.
+
+This product is generated from the [gem-scaffold](https://github.com/sakuro/gem-scaffold) template.
+While gem-scaffold itself is MIT licensed, the main code can be redistributed under the license chosen by the author after generation.
 EOF
 }
 
@@ -184,6 +187,11 @@ Next steps:
 
   3. Push your changes:
      git push -f origin main
+
+  4. LICENSE.txt に MIT License を生成しました
+     他のライセンスにする場合は自分でライセンスファイルを設置してください
+
+     テンプレート由来のコードは LICENSE-TEMPLATE.txt の MIT License に従います
 
 EOF
 }
@@ -257,6 +265,9 @@ inplace "${repo_name}.gemspec" sed \
   -e "s/spec.authors = \\[\"[^\"]*\"\\]/spec.authors = [\"$author_name\"]/" \
   -e "s/spec.email = \\[\"[^\"]*\"\\]/spec.email = [\"$author_email\"]/" \
   -e "s|spec.homepage = \"[^\"]*\"|spec.homepage = \"$repo_url\"|"
+
+# Preserve template's MIT license
+cp LICENSE.txt LICENSE-TEMPLATE.txt
 
 # Update LICENSE.txt with current year and author
 inplace LICENSE.txt sed \
