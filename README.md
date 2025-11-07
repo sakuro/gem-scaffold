@@ -11,6 +11,7 @@ The initialization script requires the following commands:
 - **[mise](https://mise.jdx.dev/)** - Development environment manager
 - **[jq](https://jqlang.github.io/jq/)** - JSON processor
 - **[curl](https://curl.se/)** - HTTP client (usually pre-installed)
+- **[openssl](https://www.openssl.org/)** - Cryptography toolkit (usually pre-installed)
 - **git** - Version control (usually pre-installed)
 
 ## Usage
