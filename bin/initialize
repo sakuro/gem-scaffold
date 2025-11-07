@@ -179,10 +179,10 @@ Next steps:
   3. Push your changes:
      git push -f origin main
 
-  4. LICENSE.txt に MIT License を生成しました
-     他のライセンスにする場合は自分でライセンスファイルを設置してください
+  4. Generated MIT License in LICENSE.txt
+     If you want to use a different license, replace the license file accordingly
 
-     テンプレート由来のコードは LICENSE-TEMPLATE.txt の MIT License に従います
+     Template-derived code follows the MIT License in LICENSE-TEMPLATE.txt
 
 EOF
 }
