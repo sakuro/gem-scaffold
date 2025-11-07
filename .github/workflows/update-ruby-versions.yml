@@ -26,6 +26,11 @@ jobs:
             jq '{ruby: [.[] | select(.status | test("maintenance")) | {name, date}] | sort_by(.date) | map(.name | tostring)}' \
             > .ruby_versions.json
 
+      - name: Update .rubocop.yml TargetRubyVersion
+        run: |
+          min_version=$(jq -r '.ruby[0]' .ruby_versions.json)
+          sed -i "s/TargetRubyVersion: [0-9.]\+/TargetRubyVersion: $min_version/" .rubocop.yml
+
       - name: Setup Git User
         uses: git-actions/set-user@v1
 
@@ -34,16 +39,16 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           # Check if there are changes
-          if git diff --quiet .ruby_versions.json; then
-            echo "No changes to .ruby_versions.json"
+          if git diff --quiet .ruby_versions.json .rubocop.yml; then
+            echo "No changes to .ruby_versions.json or .rubocop.yml"
             exit 0
           fi
 
           # Create branch and commit
           branch="update-ruby-versions"
           git checkout -b "$branch"
-          git add .ruby_versions.json
-          git commit -m ":arrow_up: Update Ruby versions in .ruby_versions.json"
+          git add .ruby_versions.json .rubocop.yml
+          git commit -m ":arrow_up: Update Ruby versions and RuboCop target version"
           git push -f origin "$branch"
 
           # Check if PR already exists
@@ -56,6 +61,8 @@ jobs:
           cat > /tmp/pr-body.md <<'EOF'
           Automated update of maintained Ruby versions from Ruby's official branches.yml.
 
-          This PR updates `.ruby_versions.json` with all maintained Ruby versions.
+          This PR updates:
+          - `.ruby_versions.json` with all maintained Ruby versions
+          - `.rubocop.yml` TargetRubyVersion to match the minimum Ruby version
           EOF
           gh pr create --title ":arrow_up: Update Ruby versions" --body-file /tmp/pr-body.md
