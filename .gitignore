@@ -1,4 +1,6 @@
-#
+# bundles
+/vendor/bundle/
+
 # Ignore generated binstubs except console and setup
 /bin/*
 !/bin/console
