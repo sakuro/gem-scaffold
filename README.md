@@ -19,7 +19,7 @@ The initialization script requires the following commands:
 
    **Option A: Using GitHub CLI (recommended)**
    ```bash
-   gh repo create my-gem --template sakuro/gem-scaffold --clone
+   gh repo create my-gem --template sakuro/gem-scaffold --clone --public
    cd my-gem
    ```
 
