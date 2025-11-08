@@ -370,7 +370,7 @@ git rm .github/workflows/ADOPTION.md
 
 # Generate binstubs for common gems (using mise to ensure correct Ruby version)
 mise exec -- bundle install --quiet
-mise exec -- bundle binstubs docquet irb rake rspec-core rubocop yard --force 2>/dev/null || true
+mise exec -- bundle binstubs docquet irb rake rbs rspec-core rubocop yard --force 2>/dev/null || true
 
 # Install RuboCop configuration via docquet
 mise exec -- bundle exec docquet install-config --force
