@@ -15,8 +15,9 @@ group :development do
   # Ruby Language Server
   gem "ruby-lsp", require: false
 
-  # RBS
+  # Type checking
   gem "rbs", require: false
+  gem "steep", require: false
 
   # RuboCop
   gem "docquet", require: false # An opionated RuboCop config tool
