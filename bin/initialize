@@ -2,6 +2,7 @@
 
 autoload -U colors
 colors
+zmodload zsh/files
 # prefix for -x
 PS4="${fg[cyan]}[$0:t]$reset_color "
 # prefix for stdout
