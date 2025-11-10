@@ -9,7 +9,7 @@ The initialization script requires the following commands:
 - **[zsh](https://www.zsh.org/)** - Z shell (usually pre-installed on macOS/Linux)
 - **[gh](https://cli.github.com/)** - GitHub CLI for repository configuration
 - **[git](https://git-scm.com/)** - Version control (usually pre-installed)
-- **[mise](https://mise.jdx.dev/)** - Development environment manager
+- **Ruby 3.2 or higher** - Use your preferred version manager (mise, rbenv, asdf, chruby, etc.)
 
 ## Usage
 

@@ -12,8 +12,25 @@ set -euxo pipefail
 # Change to project root directory
 cd "${0:h}/.."
 
+# Check Ruby version meets minimum requirement
+required_version=$(grep 'ruby = ' mise.toml | sed 's/.*ruby = "\([0-9.]*\)".*/\1/')
+current_version=$(ruby -v | grep -oE '[0-9]+\.[0-9]+' | head -n 1)
+
+if ! printf '%s\n%s\n' "$required_version" "$current_version" | sort -V -C; then
+  cat >&2 <<EOF
+Error: Ruby $required_version or higher is required, but Ruby $current_version is currently active.
+
+Please activate Ruby $required_version or higher using your preferred method:
+  - Using mise: mise install && mise trust
+  - Using rbenv: rbenv install $required_version && rbenv local $required_version
+  - Using asdf: asdf install ruby $required_version && asdf local ruby $required_version
+  - Using chruby: chruby $required_version
+EOF
+  exit 1
+fi
+
 # Check required commands
-for cmd in gh git mise; do
+for cmd in gh git; do
   if ! command -v "$cmd" &>/dev/null; then
     echo "Error: Required command '$cmd' is not installed" >&2
     exit 1
@@ -194,9 +211,6 @@ sed -i.bak \
   .github/workflows/update-ruby-versions.yml
 rm -f .github/workflows/update-ruby-versions.yml.bak
 
-# Trust mise configuration to use correct Ruby version
-mise trust
-
 # Replace gem names based on current repository name
 repo_name=${PWD:t}
 path_name=${repo_name//-/\/}
@@ -265,7 +279,7 @@ sed -i.bak \
 rm -f LICENSE.txt.bak
 
 # Get latest zeitwerk version and update gemspec
-zeitwerk_version=$(mise exec -- gem search --remote --exact zeitwerk | grep "^zeitwerk" | sed -E 's/^zeitwerk \(([0-9]+\.[0-9]+)\..*/\1/')
+zeitwerk_version=$(gem search --remote --exact zeitwerk | grep "^zeitwerk" | sed -E 's/^zeitwerk \(([0-9]+\.[0-9]+)\..*/\1/')
 sed -i.bak \
   -e "s/\"zeitwerk\", \"~> [0-9.]*\"/\"zeitwerk\", \"~> $zeitwerk_version\"/" \
   "${repo_name}.gemspec"
@@ -366,12 +380,12 @@ generate-readme
 git rm bin/initialize
 git rm .github/workflows/ADOPTION.md
 
-# Generate binstubs for common gems (using mise to ensure correct Ruby version)
-mise exec -- bundle install --quiet
-mise exec -- bundle binstubs docquet irb rake rbs rspec-core rubocop steep yard --force 2>/dev/null || true
+# Generate binstubs for common gems
+bundle install --quiet
+bundle binstubs docquet irb rake rbs rspec-core rubocop steep yard --force 2>/dev/null || true
 
 # Install RuboCop configuration via docquet
-mise exec -- bundle exec docquet install-config --force
+bundle exec docquet install-config --force
 
 # Amend the initial commit with all changes
 git add .

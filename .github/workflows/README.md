@@ -115,6 +115,7 @@ Automatically maintains Ruby version configuration with the latest maintained Ru
   - `.github/workflows/release-*.yml` ruby-version
   - `.rubocop.yml` TargetRubyVersion
   - `*.gemspec` required_ruby_version
+  - `README.md` Ruby version requirement
   - `mise.toml` ruby version
 - Creates a pull request if changes are detected
 
@@ -356,6 +357,7 @@ Ruby versions are automatically managed by the `update-ruby-versions.yml` workfl
   - `.github/workflows/release-*.yml` ruby-version
   - `.rubocop.yml` TargetRubyVersion
   - `*.gemspec` required_ruby_version
+  - `README.md` Ruby version requirement
   - `mise.toml` ruby version
 - Creates a pull request when changes are detected
 - All workflows (CI, release validation, and release publishing) use these updated versions
