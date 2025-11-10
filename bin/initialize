@@ -10,7 +10,7 @@ exec > >(sed -e "s/^/${fg[magenta]}[$0:t]$reset_color /")
 set -euxo pipefail
 
 # Change to project root directory
-cd "$(dirname "$0")/.."
+cd "${0:h}/.."
 
 # Check required commands
 for cmd in gh git mise; do
@@ -70,7 +70,8 @@ function wrap-modules()
 function cron-schedule()
 {
   # Read 8 bytes from /dev/urandom and convert to unsigned 64-bit integer
-  local random=$(od -An -N8 -tu8 /dev/urandom | tr -d ' ')
+  local random_raw=$(od -An -N8 -tu8 /dev/urandom)
+  local random=${random_raw// /}
 
   # Convert random number to minute (1-59) and hour (1-23), excluding 0
   local minute=$((random % 59 + 1))
@@ -197,9 +198,9 @@ rm -f .github/workflows/update-ruby-versions.yml.bak
 mise trust
 
 # Replace gem names based on current repository name
-repo_name=$(basename "$PWD")
-path_name=$(echo "$repo_name" | tr '-' '/')
-underscore_name=$(echo "$repo_name" | tr '-' '_')
+repo_name=${PWD:t}
+path_name=${repo_name//-/\/}
+underscore_name=${repo_name//-/_}
 
 # Generate module nesting for Ruby files
 # Example: "my-awesome-gem" -> ["My", "Awesome", "Gem"]
@@ -217,7 +218,7 @@ class_name="${(j.::.)module_names}"
 # Get author information from git config
 author_name=$(git config user.name)
 author_email=$(git config user.email)
-current_year=$(date +%Y)
+current_year=$(print -P '%D{%Y}')
 
 # Get repository URL from GitHub
 repo_url=$(gh repo view --json url -q .url)
@@ -277,9 +278,9 @@ git rm -f lib/gem/scaffold.rb lib/gem/scaffold/version.rb sig/gem/scaffold.rbs
 [[ -d sig/gem ]] && rmdir sig/gem
 
 # Create destination directories for new files
-mkdir -p "lib/$(dirname "$path_name")"
+mkdir -p "lib/${path_name:h}"
 mkdir -p "lib/${path_name}"
-mkdir -p "sig/$(dirname "$path_name")"
+mkdir -p "sig/${path_name:h}"
 
 # Rewrite main lib file with proper module nesting and zeitwerk loader
 # Split module_names into outer modules and innermost module
