@@ -13,7 +13,7 @@ set -euxo pipefail
 cd "$(dirname "$0")/.."
 
 # Check required commands
-for cmd in gh git jq mise openssl; do
+for cmd in gh git jq mise; do
   if ! command -v "$cmd" &>/dev/null; then
     echo "Error: Required command '$cmd' is not installed" >&2
     exit 1
@@ -64,20 +64,17 @@ function wrap-modules()
   echo "$content"
 }
 
-# Generate cron schedule expression from directory path and current time
+# Generate cron schedule expression from random data
 # Usage: cron-schedule
 # Output: '16 8 2-8 1,4 *' (minute: 1-59, hour: 1-23, days 2-8 of Jan/Apr)
 function cron-schedule()
 {
-  # Use full PWD and current timestamp for uniqueness
-  local input="${PWD}:$(date +%s)"
+  # Read 8 bytes from /dev/urandom and convert to unsigned 64-bit integer
+  local random=$(od -An -N8 -tu8 /dev/urandom | tr -d ' ')
 
-  # Calculate hash using SHA256 (via openssl for portability)
-  local hash=$(echo -n "$input" | openssl sha256 -r | cut -d' ' -f1)
-
-  # Convert hash to minute (1-59) and hour (1-23), excluding 0
-  local minute=$((0x${hash:0:8} % 59 + 1))
-  local hour=$((0x${hash:8:8} % 23 + 1))
+  # Convert random number to minute (1-59) and hour (1-23), excluding 0
+  local minute=$((random % 59 + 1))
+  local hour=$(((random / 100) % 23 + 1))
 
   # Output cron expression for twice-yearly Ruby version checks
   echo "'$minute $hour 2-8 1,4 *'"
