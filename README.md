@@ -9,7 +9,6 @@ The initialization script requires the following commands:
 - **[zsh](https://www.zsh.org/)** - Z shell (usually pre-installed on macOS/Linux)
 - **[gh](https://cli.github.com/)** - GitHub CLI for repository configuration
 - **[git](https://git-scm.com/)** - Version control (usually pre-installed)
-- **[jq](https://jqlang.github.io/jq/)** - JSON processor
 - **[mise](https://mise.jdx.dev/)** - Development environment manager
 
 ## Usage
