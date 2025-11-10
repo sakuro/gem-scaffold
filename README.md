@@ -11,7 +11,6 @@ The initialization script requires the following commands:
 - **[git](https://git-scm.com/)** - Version control (usually pre-installed)
 - **[jq](https://jqlang.github.io/jq/)** - JSON processor
 - **[mise](https://mise.jdx.dev/)** - Development environment manager
-- **[openssl](https://www.openssl.org/)** - Cryptography toolkit (usually pre-installed)
 
 ## Usage
 
