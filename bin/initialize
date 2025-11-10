@@ -310,7 +310,7 @@ doc_comment=$(cat <<'EOF'
 # This module serves as the namespace for the gem's functionality.
 EOF
 )
-doc_comment=$(echo "$doc_comment" | sed "s/CLASS_NAME/$class_name/")
+doc_comment=${doc_comment//CLASS_NAME/$class_name}
 
 content=$(cat <<EOF
 $doc_comment
