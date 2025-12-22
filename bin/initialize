@@ -81,10 +81,10 @@ function wrap-modules()
   echo "$content"
 }
 
-# Generate cron schedule expression from random data
-# Usage: cron-schedule
-# Output: '16 8 2-8 1,4 *' (minute: 1-59, hour: 1-23, days 2-8 of Jan/Apr)
-function cron-schedule()
+# Generate random minute and hour for cron schedule
+# Usage: cron-time
+# Output: '16 8' (minute: 1-59, hour: 1-23)
+function cron-time()
 {
   # Read 8 bytes from /dev/urandom and convert to unsigned 64-bit integer
   local random_raw=$(od -An -N8 -tu8 /dev/urandom)
@@ -94,8 +94,7 @@ function cron-schedule()
   local minute=$((random % 59 + 1))
   local hour=$(((random / 100) % 23 + 1))
 
-  # Output cron expression for twice-yearly Ruby version checks
-  echo "'$minute $hour 2-8 1,4 *'"
+  echo "$minute $hour"
 }
 
 # Generate README.md with gem documentation
@@ -204,10 +203,11 @@ EOF
 }
 
 # Update Ruby Versions workflow schedule
-cron_schedule=$(cron-schedule)
+cron_time=$(cron-time)
 sed -i.bak \
-  -e "s|# Run at .* UTC .*|# Run at repository-specific time on Jan 2-8 and Apr 2-8 to distribute API load|" \
-  -e "s|cron: '[^']*'|cron: $cron_schedule|" \
+  -e "s|# Run at [0-9:]* UTC on Dec|# Run at repository-specific time on Dec|" \
+  -e "s|# Run at [0-9:]* UTC on Apr|# Run at repository-specific time on Apr|" \
+  -e "s|cron: '[0-9]* [0-9]*|cron: '$cron_time|g" \
   .github/workflows/update-ruby-versions.yml
 rm -f .github/workflows/update-ruby-versions.yml.bak
 

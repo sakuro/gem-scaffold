@@ -4,8 +4,10 @@ name: Update Ruby Versions
 # Data source: Ruby's official branches.yml from www.ruby-lang.org repository
 on:
   schedule:
-    # Run at 13:23 UTC on Jan 2-8 and Apr 2-8 (1-week window aligned with Ruby's release schedule)
-    - cron: '23 13 2-8 1,4 *'
+    # Run at 13:23 UTC on Dec 25-31 (1-week window aligned with Ruby's release schedule)
+    - cron: '23 13 25-31 12 *'
+    # Run at 13:23 UTC on Apr 1-7
+    - cron: '23 13 1-7 4 *'
   workflow_dispatch:
 
 jobs:
