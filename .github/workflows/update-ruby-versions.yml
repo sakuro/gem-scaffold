@@ -16,10 +16,12 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
+          # PAT with workflow scope: required to push changes to .github/workflows/
           token: ${{ secrets.WORKFLOW_TOKEN }}
 
       - name: Get Ruby versions and update files
         env:
+          # PAT with workflow scope: required to push changes to .github/workflows/
           GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         run: |
           # Get Ruby versions directly from branches.yml
@@ -53,6 +55,7 @@ jobs:
 
       - name: Create Pull Request
         env:
+          # PAT required: PRs created with GITHUB_TOKEN don't trigger workflows
           GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         run: |
           # Check if there are changes
