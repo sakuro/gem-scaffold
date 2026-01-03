@@ -4,10 +4,10 @@ name: Update Ruby Versions
 # Data source: Ruby's official branches.yml from www.ruby-lang.org repository
 on:
   schedule:
-    # Run at 13:23 UTC on Dec 25-31 (1-week window aligned with Ruby's release schedule)
-    - cron: '23 13 25-31 12 *'
-    - # Run at 13:23 UTC on Apr 1-7
-    - cron: '23 13 1-7 4 *'
+    # Run at 19:17 UTC on Dec 25-31 (1-week window aligned with Ruby's release schedule)
+    - cron: '19 17 25-31 12 *'
+    # Run at 19:17 UTC on Apr 1-7
+    - cron: '19 17 1-7 4 *'
   workflow_dispatch:
 
 jobs:
@@ -16,11 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          token: ${{ secrets.WORKFLOW_UPDATE_TOKEN }}
+          token: ${{ secrets.WORKFLOW_TOKEN }}
 
       - name: Get Ruby versions and update files
         env:
-          GITHUB_TOKEN: ${{ secrets.WORKFLOW_UPDATE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         run: |
           # Get Ruby versions directly from branches.yml
           ruby_data=$(gh api -H "Accept: application/vnd.github.raw" repos/ruby/www.ruby-lang.org/contents/_data/branches.yml | \
@@ -53,7 +53,7 @@ jobs:
 
       - name: Create Pull Request
         env:
-          GITHUB_TOKEN: ${{ secrets.WORKFLOW_UPDATE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         run: |
           # Check if there are changes
           if git diff --quiet .rubocop.yml mise.toml .github/workflows/ci.yml .github/workflows/release-*.yml *.gemspec; then
