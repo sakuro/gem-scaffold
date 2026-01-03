@@ -36,7 +36,12 @@ The initialization script requires the following commands:
    - Generate proper Ruby module namespacing
    - Set up repository-specific cron schedule
    - Configure GitHub settings automatically
+   - Optionally configure WORKFLOW_TOKEN secret (for workflows that update `.github/workflows/`)
    - Remove setup script and amend changes into initial commit
+
+   > **Note**: During setup, you'll be prompted for a Personal Access Token with `workflow` scope.
+   > This is required for workflows like `update-ruby-versions.yml` that modify workflow files.
+   > Create one at: https://github.com/settings/tokens/new?scopes=workflow
 
 3. Push the initialized changes:
    ```bash

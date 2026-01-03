@@ -156,6 +156,15 @@ function configure-github-settings()
   echo ""
   echo "Configuring GitHub repository settings..."
 
+  # Prompt for WORKFLOW_TOKEN
+  echo ""
+  echo "WORKFLOW_TOKEN is a Personal Access Token with 'workflow' scope."
+  echo "It is required for workflows that update .github/workflows/ files."
+  echo "Create one at: https://github.com/settings/tokens/new?scopes=workflow"
+  echo ""
+  read -rs "workflow_token?Enter WORKFLOW_TOKEN (leave empty to skip): "
+  echo ""
+
   # Set workflow permissions to read/write and allow PR creation
   if gh api --method PUT repos/:owner/:repo/actions/permissions/workflow \
     -f default_workflow_permissions=write \
@@ -171,6 +180,22 @@ function configure-github-settings()
     echo "✓ Created 'release' environment"
   else
     echo "⚠ Could not create 'release' environment (may need to be created manually)"
+  fi
+
+  # Set WORKFLOW_TOKEN secret
+  if [[ -n "$workflow_token" ]]; then
+    if echo "$workflow_token" | gh secret set WORKFLOW_TOKEN; then
+      echo "✓ WORKFLOW_TOKEN secret configured"
+    else
+      echo "⚠ Could not set WORKFLOW_TOKEN secret"
+    fi
+  else
+    echo ""
+    echo "⚠ WORKFLOW_TOKEN was not provided. To configure manually:"
+    echo "  1. Create a Personal Access Token with 'workflow' scope at:"
+    echo "     https://github.com/settings/tokens/new?scopes=workflow"
+    echo "  2. Add it as a repository secret named WORKFLOW_TOKEN:"
+    echo "     gh secret set WORKFLOW_TOKEN"
   fi
 }
 
