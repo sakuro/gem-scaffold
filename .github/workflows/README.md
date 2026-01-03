@@ -378,9 +378,9 @@ gh workflow run update-ruby-versions.yml
 **Note:** When a new Ruby version is released (e.g., Ruby 3.5 in December 2024), there will temporarily be 4 versions until the oldest version reaches EOL.
 
 **Update Schedule:**
-The workflow runs twice a year during two 1-week windows: January 2-8 and April 2-8, aligned with Ruby's predictable release schedule:
-- New Ruby versions are released on December 25th (checked during January 2-8)
-- Ruby versions reach EOL on March 31st (checked during April 2-8)
+The workflow runs twice a year during two 1-week windows: Dec 25-31 and Apr 1-7, aligned with Ruby's predictable release schedule:
+- New Ruby versions are released on December 25th (checked during Dec 25-31)
+- Ruby versions reach EOL on March 31st (checked during Apr 1-7)
 
 The 1-week window provides flexibility to capture updates after Ruby's release dates. The workflow is idempotent and only creates PRs when changes are detected, so multiple runs during the window cause no issues.
 
