@@ -26,6 +26,7 @@ jobs:
       uses: actions/checkout@v5
       with:
         fetch-depth: 0
+        token: ${{ secrets.WORKFLOW_TOKEN }}
 
     - name: Set git user
       uses: git-actions/set-user@v1
