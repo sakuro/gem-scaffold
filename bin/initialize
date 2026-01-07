@@ -414,7 +414,7 @@ bundle exec docquet install-config --force
 
 # Amend the initial commit with all changes
 git add .
-git commit --amend -m ":new: Initial commit"
+git commit --amend -m ":tada: Initialize ${repo_name} using bin/initialize from gem-scaffold"
 
 # Configure GitHub repository settings
 configure-github-settings
