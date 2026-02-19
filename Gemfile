@@ -27,7 +27,7 @@ group :development do
 
   # YARD
   gem "redcarpet", require: false
-  gem "yard", github: "lsegal/yard", require: false # Version with Data.define support
+  gem "yard", require: false # Version with Data.define support
 end
 
 group :test do
